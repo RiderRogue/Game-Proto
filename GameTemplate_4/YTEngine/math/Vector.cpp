@@ -1,0 +1,18 @@
+/*!
+* @brief	ベクトルクラス。
+*/
+
+#include "stdafx.h"
+#include "Vector.h"
+#include "Matrix.h"
+
+
+namespace YTEngine {
+	/*!
+	*@brief	行列からクォータニオンを作成。
+	*/
+	void CQuaternion::SetRotation(const CMatrix& m)
+	{
+		DirectX::XMStoreFloat4(&vec, DirectX::XMQuaternionRotationMatrix(m));
+	}
+}
