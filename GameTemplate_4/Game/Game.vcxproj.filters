@@ -13,6 +13,9 @@
     <Filter Include="Enemy">
       <UniqueIdentifier>{d91908c3-fb60-478e-8a00-aa131df9e7e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\sprite">
+      <UniqueIdentifier>{91caa6bd-ab0f-48ea-9e82-77cbb994c908}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Player.cpp" />
@@ -27,6 +30,9 @@
     <ClCompile Include="EnemyManager.cpp">
       <Filter>Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="title.cpp" />
+    <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="gauge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h" />
@@ -40,6 +46,9 @@
     <ClInclude Include="EnemyManager.h">
       <Filter>Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="title.h" />
+    <ClInclude Include="MainGame.h" />
+    <ClInclude Include="gauge.h" />
   </ItemGroup>
   <ItemGroup>
     <MeshContentTask Include="Assets\modelData\unityChan.fbx">
@@ -65,10 +74,18 @@
     <None Include="Assets\level\stage_02.tkl">
       <Filter>Assets\level</Filter>
     </None>
+    <None Include="Assets\level\level01.tkl" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\DirectXⅡ\Chapter_17\Chapter_17_00_Answer\Game\Assets\modelData\utc_nomal.tga">
-      <Filter>Assets\modelData</Filter>
-    </Image>
+    <ImageContentTask Include="Assets\modelData\utc_nomal.tga" />
+    <ImageContentTask Include="Assets\sprite\bullet.png">
+      <Filter>Assets\sprite</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\sprite\konkurito.jpg">
+      <Filter>Assets\sprite</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\sprite\gauge_frame.png" />
+    <ImageContentTask Include="Assets\sprite\gauge_meter.png" />
+    <ImageContentTask Include="Assets\sprite\Normal_TargetSight.png" />
   </ItemGroup>
 </Project>

@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "Physics/CollisionAttr.h"
 
 using namespace YTEngine;
 Player::Player()
 {
-	
+
 }
 
 
@@ -12,14 +13,16 @@ Player::~Player()
 {
 	//プレイヤーの剛体を剛体のリストから削除する。
 	//m_charaCon.RemoveRigidBoby();
+	//DeleteGO(bulletManager);
 }
 
-void Player::OnDestroy() 
+void Player::OnDestroy()
 {
 	//todo 法線マップを解放。
 	if (g_normalMapSRV != nullptr) {
 		g_normalMapSRV->Release();
 	}
+	G_Player_BulletManager().OnDestroy();
 }
 
 bool Player::Start()
@@ -42,8 +45,9 @@ bool Player::Start()
 		player_height,
 		m_position
 	);
-	
-	m_Bullet= NewGO<Player_BulletManager>(0, "Player_BulletManager");
+	m_charaCon.GetRigidBody()->GetBody()->setUserIndex(enCollisionAttr_Player);
+	G_Player_BulletManager().Start();
+	//bulletManager = NewGO<Player_BulletManager>(1, "Player_BulletManager");
 
 	//Unityちゃんの法線マップをロード。
 	//ファイル名を使って、テクスチャをロードして、ShaderResrouceViewを作成する。
@@ -60,7 +64,8 @@ bool Player::Start()
 	//);
 	////モデルに法線マップを設定する。
 	//m_model.SetNormalMap(g_normalMapSRV);
-	
+
+	targetSight.Init(L"Resource/sprite/Normal_TargetSight.dds", 100, 100);
 	return true;
 }
 
@@ -73,7 +78,7 @@ void Player::Update()
 
 	//左スティックの入力量を受け取る。
 	MoveEffect();
-	
+
 	mRot.MakeRotationFromQuaternion(m_rotation);
 	m_forward.x = mRot.m[2][0];
 	m_forward.y = mRot.m[2][1];
@@ -86,7 +91,7 @@ void Player::Update()
 	m_rite.Normalize();
 
 	m_moveSpeed += camera_forward * lStick_y *2.0f;//+=を=にするとジャンプ速度に影響を及ぼす。
-	m_moveSpeed += camera_rite * lStick_x*2.0f ;	
+	m_moveSpeed += camera_rite * lStick_x*2.0f;
 	//プレイヤーの前方向を計算
 
 	//回転
@@ -99,12 +104,12 @@ void Player::Update()
 	float player_rot;
 	player_rot = moveAngle.Dot(m_forward);
 	if (camera_rot_angle>0.0f) {
-		player_rot = acos(player_rot);
+	player_rot = acos(player_rot);
 	}
 	else {
-		player_rot = -acos(player_rot);
+	player_rot = -acos(player_rot);
 	}*/
-	
+
 	qBias.SetRotationDeg(CVector3::AxisY(), camera_rot_angle *camera_rot_speed);
 	m_rotation.Multiply(qBias);
 
@@ -117,30 +122,28 @@ void Player::Update()
 	//プレイヤーの攻撃。
 	Player_Bullet_Controller();
 
-	
+
 	m_position = m_charaCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
-	
-	//ワールド行列の更新。
+
+																				 //ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
-	//プレイヤーの攻撃。
-	Player_Bullet_Controller();
 
 	//シャドウマップを更新。
 	Shadow_map().UpdateFromLightTarget(
-		{ m_position.x, m_position.y+1000.0f, m_position.z },
+		{ m_position.x, m_position.y + 1000.0f, m_position.z },
 		m_position
 	);
 
-	
+	targetSight.Update(m_targetSight_position, CQuaternion::Identity(), { 1.0f,1.0f,1.0f });
+
 }
 
 void Player::MoveEffect()
 {
-	//m_model.SetDirectionLight(10.0f, 0.0f, 0.0f);
 	/*
 	移動時の最大速度係数と最小速度係数。
 	*/
-	const static float movespeed_MAX = 1200.0f;
+	const static float movespeed_MAX = 800.0f;
 	const static float movespeed_MIN = 200.0f;
 	/*
 	移動時の速度係数。
@@ -151,14 +154,14 @@ void Player::MoveEffect()
 	if (g_pad[0].IsPress(enButtonLB1))
 	{
 		if (movespeed < movespeed_MAX) {
-			movespeed += 20.0f;	
+			movespeed += 800.0f;
 		}
 		m_model.DirectionLight_Red01(4.0f);
 	}
 	//LB1ボタンを押しておらず、加速していないとき
 	else {
 		if (movespeed > movespeed_MIN) {
-			movespeed -= 20.0f;		
+			movespeed -= 20.0f;
 		}
 		m_model.DirectionLight_ReturnRed(4.0f);
 	}
@@ -173,7 +176,8 @@ void Player::Player_Bullet_Controller()
 	if (g_pad[0].IsPress(enButtonRB2))
 	{
 		//射撃処理。
-		m_Bullet->Shot(m_position,m_forward);
+		G_Player_BulletManager().bulletShot(m_position, m_forward);
+		//bulletManager->Shot(m_position, m_forward);
 
 		//プレイヤーを正面に向かせるために、回転を固定する。
 		//player_rotationFlag = false;
@@ -182,6 +186,7 @@ void Player::Player_Bullet_Controller()
 		//回転の固定を解除。
 		//player_rotationFlag = true;
 	}
+	G_Player_BulletManager().Update();
 }
 
 
@@ -213,7 +218,7 @@ void Player::Player_Jump()
 			}
 		}
 		else {//飛行していれば
-			//飛行を止める。
+			  //飛行を止める。
 			FlightFlag = false;
 		}
 	}
@@ -253,7 +258,7 @@ void Player::Player_Jump()
 				if (m_moveSpeed.y < 0.0f) {
 
 					m_moveSpeed.y += 350.0f;
-					
+
 				}
 				else {
 					m_moveSpeed.y = 0.0f;
@@ -266,9 +271,15 @@ void Player::Draw()
 {
 	m_model.Draw(
 		enRenderMode_Normal,
-		g_camera3D.GetViewMatrix(), 
+		g_camera3D.GetViewMatrix(),
 		g_camera3D.GetProjectionMatrix()
 	);
+	G_Player_BulletManager().Draw();
+}
+
+void Player::PostDraw()
+{
+	targetSight.Draw();
 }
 
 void Player::SetShadowCasters()

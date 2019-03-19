@@ -90,6 +90,8 @@ namespace YTEngine {
 		//ポストエフェクトの描画。
 		m_postEffect.Draw();
 
+
+
 		//レンダリングターゲットをフレームバッファに戻す。
 		g_graphicsEngine->ChangeRenderTarget(
 			m_frameBufferRenderTargetView,
@@ -98,13 +100,19 @@ namespace YTEngine {
 		);
 
 		m_copyMainRtToFrameBufferSprite.Draw();
+		//IGameObjectの描画
 
 		//レンダリングターゲットとデプスステンシルの参照カウンタを下す。
 		m_frameBufferRenderTargetView->Release();
-		m_frameBufferDepthStencilView->Release();
+		m_frameBufferDepthStencilView->Release();	
+		for (GameObjectList objList : m_gameObjectListArray) {
+			for (IGameObject* obj : objList) {
+				obj->PostDrawWrapper();
+			}
+		}
 		//シーングラフを更新。
 		UpdateSceneGraph();
-		
+
 	}
 
 	//必要なオブジェクトをシャドウキャスターに登録する。

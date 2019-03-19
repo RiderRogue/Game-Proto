@@ -11,7 +11,7 @@ namespace YTEngine {
 																//衝突したときに呼ばれるコールバック関数。
 			virtual	btScalar	addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 			{
-				if (convexResult.m_hitCollisionObject == me) {
+				if (convexResult.m_hitCollisionObject == me|| convexResult.m_hitCollisionObject->getUserIndex()== enCollisionAttr_Player) {
 					//自分に衝突した。
 					return 0.0f;
 				}
@@ -22,8 +22,14 @@ namespace YTEngine {
 		};
 	}
 
+	BulletController::~BulletController() {
+		if (deathflag == false) {
+			RemoveRigidBoby();
+		}
+	}
 	void BulletController::Init(float radius, const CVector3& position)
 	{
+		deathflag = false;
 		hitFlag = false;
 		m_position = position;
 		//コリジョン作成。
@@ -109,6 +115,9 @@ namespace YTEngine {
 	*/
 	void BulletController::RemoveRigidBoby()
 	{
+		//if (m_rigidBody.GetBody() != nullptr) {
 		g_physics.RemoveRigidBody(m_rigidBody);
+		//}
+		deathflag = true;
 	}
 }

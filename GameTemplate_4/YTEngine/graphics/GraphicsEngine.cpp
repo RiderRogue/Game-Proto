@@ -155,6 +155,46 @@ namespace YTEngine {
 			descDSV.Texture2D.MipSlice = 0;
 			m_pd3dDevice->CreateDepthStencilView(m_depthStencil, &descDSV, &m_depthStencilView);
 		}
+		{
+			ID3D11BlendState* BlendState;
+			//ƒuƒŒƒ“ƒhÝ’è
+			D3D11_BLEND_DESC BLEND_DETE;
+			BLEND_DETE.AlphaToCoverageEnable = false;
+			BLEND_DETE.IndependentBlendEnable = false;
+			BLEND_DETE.RenderTarget[0].BlendEnable = true;
+			BLEND_DETE.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			BLEND_DETE.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			BLEND_DETE.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+			BLEND_DETE.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+			BLEND_DETE.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+			BLEND_DETE.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			BLEND_DETE.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+			m_pd3dDevice ->CreateBlendState(&BLEND_DETE, &BlendState);
+			m_pd3dDeviceContext -> OMSetBlendState(BlendState, nullptr, 0xFFFFFFFF);
+			MemoryBarrier();
+		}
+		{
+			D3D11_DEPTH_STENCIL_DESC desc = {};
+			desc.DepthEnable = true;
+			desc.DepthWriteMask = false ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+			desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+			desc.StencilEnable = false;
+			desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+			desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+
+			desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+			desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+			desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+			desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+
+			desc.BackFace = desc.FrontFace;
+
+			ID3D11DepthStencilState* depthStencilState;
+			m_pd3dDevice->CreateDepthStencilState(&desc, &depthStencilState);
+			m_pd3dDeviceContext->OMSetDepthStencilState(depthStencilState, 0);
+			MemoryBarrier();
+		}
 		D3D11_RASTERIZER_DESC desc = {};
 		desc.CullMode = D3D11_CULL_NONE;
 		desc.FillMode = D3D11_FILL_SOLID;

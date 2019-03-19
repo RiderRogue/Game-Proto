@@ -16,9 +16,7 @@ namespace YTEngine {
 		BulletController() {
 
 		}
-		~BulletController() {
-			RemoveRigidBoby();
-		}
+		~BulletController();
 
 		/*!
 		* @brief	初期化。
@@ -82,5 +80,6 @@ namespace YTEngine {
 		RigidBody			m_rigidBody;					//剛体。
 		int Flag = 0;										//キャラクターのフラグ
 		bool hitFlag = false;                  //地面や壁にぶつかったことを知らせるフラグ。
+		bool deathflag = true;   //弾が存在しているかを判定する。
 	};
 }

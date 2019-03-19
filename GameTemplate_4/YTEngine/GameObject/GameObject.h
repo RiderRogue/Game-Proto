@@ -43,6 +43,7 @@ namespace YTEngine {
 		*/
 		virtual void Draw(){}
 
+		virtual void PostDraw() {}
 		/*!
 		*@brief シャドウキャスターへ登録
 		*/
@@ -165,6 +166,15 @@ namespace YTEngine {
 			if (m_isActive && m_isStart && !m_isDead && !m_isRegistDeadList) {
 				//描画。
 				Draw();
+			}
+		}
+
+		void PostDrawWrapper()
+		{
+			//アクティブかつStart関数が終わり死亡しておらず死亡リストに積まれていない場合はtrueになる。
+			if (m_isActive && m_isStart && !m_isDead && !m_isRegistDeadList) {
+				//描画。
+				PostDraw();
 			}
 		}
 		//シャドウキャスター登録のラップ関数。

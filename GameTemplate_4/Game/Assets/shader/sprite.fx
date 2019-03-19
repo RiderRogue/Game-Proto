@@ -30,5 +30,7 @@ float4 PSMain( PSInput In ) : SV_Target0
 {
 	//テクスチャカラーをそのまま返す。
 	float4 color = colorTexture.Sample(Sampler, In.uv);
+	//ピクセルキル
+	clip(color.a-0.1f);
 	return color;
 }

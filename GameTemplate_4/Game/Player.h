@@ -13,6 +13,7 @@ public:
 	bool Start();
 	void Update();
 	void Draw();
+	void PostDraw();
 	void OnDestroy();
 	//シャドウキャスターへの登録。
 	void SetShadowCasters();
@@ -25,7 +26,7 @@ public:
 	{
 		return lStick_x;
 	}
-	
+
 	/*!
 	*@brief 左スティックのY軸の入力量を返す。
 	*@return 左スティックのY軸の入力量。
@@ -131,8 +132,9 @@ private:
 	float player_height = 100.0f;		                //プレイヤーの高さ。
 	float camera_rot_angle = 0.0f;                      //ゲームカメラが回る方向を示す(-1～1の範囲)。
 	float camera_rot_speed = 0.0f;                      //ゲームカメラの回転スピード。
-	Player_BulletManager* m_Bullet;
 	ID3D11ShaderResourceView* g_normalMapSRV = nullptr; //法線マップ。
-
+	Player_BulletManager* bulletManager;
+	Sprite targetSight;
+	CVector3 m_targetSight_position = {0.0f,45.0f,0.0f};
 };
 
