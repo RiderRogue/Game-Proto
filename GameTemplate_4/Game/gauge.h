@@ -8,9 +8,15 @@ public:
 	bool Start();
 	void Update();
 	void PostDraw();
+
+	void HP_meter(float hp, float hpMAX);
+	void Energy_meter(float energy, float energyMAX);
 private:
-	Sprite m_gauge_frame;
-	Sprite m_gauge_meter;
-	float s_x = 4.0f;
+	Sprite m_HP_frame;
+	Sprite m_HP_meter;
+	Sprite m_energy_frame;
+	Sprite m_energy_meter;
+	float e_hp = 1.0f;
+	float e_gauge = 1.0f;
 };
 

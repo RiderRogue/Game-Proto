@@ -65,7 +65,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;YTEngine.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3dcompiler.lib;%(AdditionalDependencies);xinput.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;YTEngine.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3dcompiler.lib;%(AdditionalDependencies);xinput.lib;XAudio2.lib;Winmm.lib;Effekseer.Debug.lib;EffekseerRendererDX11.Debug.lib</AdditionalDependencies>
     </Link>
     <ImageContentTask>
       <ContentOutput>$(ProjectDir)\Resource\sprite\%(Filename).dds</ContentOutput>
@@ -89,7 +89,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;YTEngine.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3dcompiler.lib;%(AdditionalDependencies);xinput.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;dxguid.lib</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;YTEngine.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;d3dcompiler.lib;%(AdditionalDependencies);xinput.lib;XAudio2.lib;Winmm.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;dxguid.lib;Effekseer.Release.lib;EffekseerRendererDX11.Release.lib</AdditionalDependencies>
     </Link>
     <ImageContentTask>
       <ContentOutput>$(ProjectDir)\Resource\sprite\%(Filename).dds</ContentOutput>
@@ -106,13 +106,16 @@
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Player_BulletManager.cpp" />
+    <ClCompile Include="Player_MissileManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="WalkEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
@@ -121,23 +124,40 @@
     <ClInclude Include="Gamecamera.h" />
     <ClInclude Include="gauge.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="Missile.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Player_BulletManager.h" />
+    <ClInclude Include="Player_MissileManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="WalkEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <MeshContentTask Include="Assets\modelData\books.fbx" />
     <MeshContentTask Include="Assets\modelData\books1.fbx" />
     <MeshContentTask Include="Assets\modelData\bullet.FBX" />
     <MeshContentTask Include="Assets\modelData\konkuri.rando.fbx" />
+    <MeshContentTask Include="Assets\modelData\level_proto.fbx" />
+    <MeshContentTask Include="Assets\modelData\Player_Robo.FBX" />
+    <MeshContentTask Include="Assets\modelData\Plaza.FBX" />
+    <MeshContentTask Include="Assets\modelData\road.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_curve90.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_short.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_slope01.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_slope02.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_slope03.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_zyuzi.FBX" />
+    <MeshContentTask Include="Assets\modelData\stage_base01.FBX" />
     <MeshContentTask Include="Assets\modelData\unityChan.fbx">
       <ContentOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\Assets\modelData\%(Filename).cmo</ContentOutput>
       <ContentOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\Assets\modelData\%(Filename).cmo</ContentOutput>
     </MeshContentTask>
+    <MeshContentTask Include="Assets\modelData\wall.FBX" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\level\level01.tkl" />
+    <None Include="Assets\level\level01_proto.tkl" />
+    <None Include="Assets\level\level01_proto02.tkl" />
     <None Include="Assets\level\stage_01.tkl" />
     <None Include="Assets\level\stage_02.tkl" />
   </ItemGroup>
@@ -156,6 +176,38 @@
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\sprite\Normal_TargetSight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\sprite\Energy_frame.png" />
+    <ImageContentTask Include="Assets\sprite\Energy_meter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Assets\sound\landing.wav">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\sound\move.wav">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\sprite\Missile_TargetSight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Assets\sound\se_lockon_1.wav">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Assets\sound\JumpSE.wav">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\sprite\TitleBase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\sprite\Title01.png" />
+    <ImageContentTask Include="Assets\sprite\Title02.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

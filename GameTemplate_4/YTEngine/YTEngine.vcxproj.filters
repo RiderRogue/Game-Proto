@@ -164,6 +164,10 @@
     </ClInclude>
     <ClInclude Include="character\BulletController.h" />
     <ClInclude Include="physics\SphereCollider.h" />
+    <ClInclude Include="sound\WaveFile.h" />
+    <ClInclude Include="sound\WaveFileBank.h" />
+    <ClInclude Include="sound\SoundEngine.h" />
+    <ClInclude Include="sound\SoundSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -271,5 +275,9 @@
     </ClCompile>
     <ClCompile Include="character\BulletController.cpp" />
     <ClCompile Include="physics\SphereCollider.cpp" />
+    <ClCompile Include="sound\WaveFile.cpp" />
+    <ClCompile Include="sound\WaveFileBank.cpp" />
+    <ClCompile Include="sound\SoundEngine.cpp" />
+    <ClCompile Include="sound\SoundSource.cpp" />
   </ItemGroup>
 </Project>

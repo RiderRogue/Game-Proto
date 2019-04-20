@@ -24,6 +24,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletDynamics", "YTEngine\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "YTEngine\bulletPhysics\src\LinearMath\LinearMath.vcxproj", "{4DCE52A5-106C-3D94-815D-C8EBC6133B5E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Effekseer", "YTEngine\EffekseerRuntime130\src\Effekseer\Effekseer.vcxproj", "{91E36741-5DFC-46E3-A7F3-28A67FD637C8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererDX11", "YTEngine\EffekseerRuntime130\src\EffekseerRendererDX11\EffekseerRendererDX11.vcxproj", "{4E7A02CF-51F7-414B-9874-A34116D2B43C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -138,6 +142,46 @@ Global
 		{4DCE52A5-106C-3D94-815D-C8EBC6133B5E}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
 		{4DCE52A5-106C-3D94-815D-C8EBC6133B5E}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
 		{4DCE52A5-106C-3D94-815D-C8EBC6133B5E}.RelWithDebInfo|x86.ActiveCfg = RelWithDebInfo|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Debug|x64.ActiveCfg = Debug|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Debug|x64.Build.0 = Debug|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Debug|x86.ActiveCfg = Debug|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Debug|x86.Build.0 = Debug|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.MinSizeRel|x64.ActiveCfg = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.MinSizeRel|x64.Build.0 = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.MinSizeRel|x86.ActiveCfg = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.MinSizeRel|x86.Build.0 = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Preview|x64.ActiveCfg = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Preview|x64.Build.0 = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Preview|x86.ActiveCfg = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Preview|x86.Build.0 = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|x64.ActiveCfg = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|x64.Build.0 = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|x86.ActiveCfg = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|x86.Build.0 = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.RelWithDebInfo|x64.ActiveCfg = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.RelWithDebInfo|x86.Build.0 = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Debug|x64.ActiveCfg = Debug|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Debug|x64.Build.0 = Debug|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Debug|x86.ActiveCfg = Debug|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Debug|x86.Build.0 = Debug|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.MinSizeRel|x64.ActiveCfg = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.MinSizeRel|x64.Build.0 = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.MinSizeRel|x86.ActiveCfg = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.MinSizeRel|x86.Build.0 = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Preview|x64.ActiveCfg = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Preview|x64.Build.0 = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Preview|x86.ActiveCfg = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Preview|x86.Build.0 = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|x64.ActiveCfg = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|x64.Build.0 = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|x86.ActiveCfg = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|x86.Build.0 = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.RelWithDebInfo|x64.ActiveCfg = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.RelWithDebInfo|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
-
+#include "WalkEnemy.h"
 //#include "GameBase/GameBase.h"
 
 EnemyManager::EnemyManager()
@@ -25,6 +25,7 @@ void EnemyManager::Update()
 	for (int i = 0; i < Enemy_NUM; i++) {
 		//生きている奴のみ
 		if (enemy_slot[i].Aliveflag == true) {
+			//BulletManagerとEnemyManagerで当たり判定をとる。
 			bool bullethitflag = G_Player_BulletManager().EnemyHit(enemy_slot[i].enemy->GetPosition_center());
 			if (bullethitflag == true) {
 				//被弾していれば
@@ -43,7 +44,7 @@ void EnemyManager::spawnenemy(CVector3 position)
 	for (int i = 0; i < Enemy_NUM; i++) {
 		if (enemy_slot[i].Aliveflag == false) {
 			//敵オブジェクトを生成&生存フラグを上げておく。
-			enemy_slot[i].enemy = NewGO<Enemy>(0);
+			enemy_slot[i].enemy = NewGO<WalkEnemy>(0);
 			enemy_slot[i].enemy->SetPosition(position);
 			enemy_slot[i].enemy->SetslotNumber(i);
 			enemy_slot[i].Aliveflag = true;

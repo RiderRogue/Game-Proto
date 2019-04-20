@@ -204,6 +204,8 @@
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="physics\SphereCollider.h" />
+    <ClInclude Include="sound\SoundSource.h" />
+    <ClInclude Include="sound\SoundEngine.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
@@ -214,6 +216,8 @@
     <ClInclude Include="util\LocData.h" />
     <ClInclude Include="util\NameKey.h" />
     <ClInclude Include="util\Util.h" />
+    <ClInclude Include="sound\WaveFile.h" />
+    <ClInclude Include="sound\WaveFileBank.h" />
     <ClInclude Include="YTEngine.h" />
     <ClInclude Include="YTEngineStruct.h" />
   </ItemGroup>
@@ -252,6 +256,8 @@
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="physics\SphereCollider.cpp" />
+    <ClCompile Include="sound\SoundSource.cpp" />
+    <ClCompile Include="sound\SoundEngine.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -261,6 +267,8 @@
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
     <ClCompile Include="GameObject\Transform.cpp" />
+    <ClCompile Include="sound\WaveFile.cpp" />
+    <ClCompile Include="sound\WaveFileBank.cpp" />
     <ClCompile Include="YTEngine.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

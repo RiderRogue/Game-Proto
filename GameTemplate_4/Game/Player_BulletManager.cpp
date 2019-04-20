@@ -80,6 +80,17 @@ void Player_BulletManager::Update()
 			}
 		}
 	}
+
+	//ミサイルがステージと接触したときに死亡フラグをあげる。
+	for (int i = 0; i < Player_Missile_NUM; i++) {
+		//発射している弾だけ
+		if (missile[i].flag == true) {
+			if (missile[i].m_bulletCon.Gethit() == true) {
+				//ステージに衝突した際に、死亡フラグをあげる。
+				missile[i].desflag = true;
+			}
+		}
+	}
 	//弾が発射されて一定距離進んだときに死亡フラグをあげる。
 	for (int i = 0; i < Player_Bullet_NUM; i++) {
 		if (bullet[i].flag == true) {
@@ -90,6 +101,15 @@ void Player_BulletManager::Update()
 		}
 	}
 
+	//ミサイルが発射されて一定距離進んだときに死亡フラグをあげる。
+	for (int i = 0; i < Player_Missile_NUM; i++) {
+		if (missile[i].flag == true) {
+			if (missile[i].lengthcount >= 300) {
+				//一定距離進んだ際に、死亡フラグをあげる。
+				missile[i].desflag = true;
+			}
+		}
+	}
 	//死亡フラグがたった弾を削除する。
 	for (int i = 0; i < Player_Bullet_NUM; i++) {
 		if (bullet[i].desflag == true) {
@@ -98,6 +118,17 @@ void Player_BulletManager::Update()
 			//削除されたのでフラグをリセット。
 			bullet[i].flag = false;
 			bullet[i].desflag = false;
+		}
+	}
+
+	//死亡フラグがたったミサイルを削除する。
+	for (int i = 0; i < Player_Missile_NUM; i++) {
+		if (missile[i].desflag == true) {
+			//剛体を削除。
+			missile[i].m_bulletCon.RemoveRigidBoby();
+			//削除されたのでフラグをリセット。
+			missile[i].flag = false;
+			missile[i].desflag = false;
 		}
 	}
 

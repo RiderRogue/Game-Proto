@@ -70,6 +70,20 @@ namespace YTEngine {
 			vec = _v.vec;
 			return *this;
 		}
+		/*!
+		*@brief	比較演算子。
+		*/
+		bool operator==(const CVector3& _v)
+		{
+			if ((vec.x == _v.vec.x) &&
+				(vec.y == _v.vec.y) &&
+				(vec.z == _v.vec.z)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 		CVector3() {}
 		/*!
 		* @brief	コンストラクタ。

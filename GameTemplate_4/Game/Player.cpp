@@ -23,12 +23,15 @@ void Player::OnDestroy()
 		g_normalMapSRV->Release();
 	}
 	G_Player_BulletManager().OnDestroy();
+	DeleteGO(m_gauge);
 }
 
 bool Player::Start()
 {
+	Energy = Energy_MAX;
+
 	//cmoファイルの読み込み。
-	m_model.Init(L"Assets/modelData/unityChan.cmo");
+	m_model.Init(L"Assets/modelData/Player_Robo.cmo");
 	mRot.MakeRotationFromQuaternion(m_rotation);
 	m_forward.x = mRot.m[2][0];
 	m_forward.y = mRot.m[2][1];
@@ -45,6 +48,7 @@ bool Player::Start()
 		player_height,
 		m_position
 	);
+
 	m_charaCon.GetRigidBody()->GetBody()->setUserIndex(enCollisionAttr_Player);
 	G_Player_BulletManager().Start();
 	//bulletManager = NewGO<Player_BulletManager>(1, "Player_BulletManager");
@@ -66,15 +70,29 @@ bool Player::Start()
 	//m_model.SetNormalMap(g_normalMapSRV);
 
 	targetSight.Init(L"Resource/sprite/Normal_TargetSight.dds", 100, 100);
+	m_gauge = NewGO<gauge>(0, "Gauge");
+	//サウンドエンジンを初期化。
+	m_soundEngine.Init();
+
+	//ワンショット再生のSE
+	m_se[0].Init(L"Assets/sound/landing.wav");
+	m_se[1].Init(L"Assets/sound/landing.wav");
+	m_se[2].Init(L"Assets/sound/landing.wav");
+	m_movese.Init(L"Assets/sound/move.wav");
+	m_Jumpse.Init(L"Assets/sound/JumpSE.wav");
 	return true;
 }
 
 void Player::Update()
 {
+	//サウンドエンジンを更新。
+	m_soundEngine.Update();
 
 	m_moveSpeed.x = 0.0f;
 	//m_moveSpeed.y = 0.0f;
 	m_moveSpeed.z = 0.0f;
+
+	m_moveSpeed_side = 0.0f;
 
 	//左スティックの入力量を受け取る。
 	MoveEffect();
@@ -90,8 +108,11 @@ void Player::Update()
 	m_rite.z = mRot.m[0][2];
 	m_rite.Normalize();
 
+	Bullet_vector = m_forward;
 	m_moveSpeed += camera_forward * lStick_y *2.0f;//+=を=にするとジャンプ速度に影響を及ぼす。
 	m_moveSpeed += camera_rite * lStick_x*2.0f;
+	//横方向の移動速度を保持する。カメラに使う。
+	m_moveSpeed_side = lStick_x*2.0f;
 	//プレイヤーの前方向を計算
 
 	//回転
@@ -113,19 +134,21 @@ void Player::Update()
 	qBias.SetRotationDeg(CVector3::AxisY(), camera_rot_angle *camera_rot_speed);
 	m_rotation.Multiply(qBias);
 
-	Player_Jump();
-	//キャラクターコントローラーを使用して、座標を更新。
+	Bullet_vector = m_forward;
+
 	if (m_charaCon.IsOnGround()) {
 		//地面についた。
 		m_moveSpeed.y = 0.0f;
 	}
+	Player_Jump();
+	//エナジー管理。
+	Energycontrol();
 	//プレイヤーの攻撃。
-	Player_Bullet_Controller();
-
+	Bullet_Missile_Controller();
 
 	m_position = m_charaCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
 
-																				 //ワールド行列の更新。
+	 //ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
 
 	//シャドウマップを更新。
@@ -136,6 +159,14 @@ void Player::Update()
 
 	targetSight.Update(m_targetSight_position, CQuaternion::Identity(), { 1.0f,1.0f,1.0f });
 
+	//if (g_pad[0].IsTrigger(enButtonA)) {
+	//	//Aボタンが押されたらSEを鳴らす。
+	//	static int m_playSENo = 0;
+	//	m_se[m_playSENo].Play(false);
+	//	m_playSENo++;
+	//	m_playSENo = m_playSENo % 2;
+	//}
+	//viewport.Project
 }
 
 void Player::MoveEffect()
@@ -143,20 +174,37 @@ void Player::MoveEffect()
 	/*
 	移動時の最大速度係数と最小速度係数。
 	*/
-	const static float movespeed_MAX = 800.0f;
-	const static float movespeed_MIN = 200.0f;
+	const static float movespeed_QB = 1800.0f;
+	const static float movespeed_MAX = 600.0f;
+	const static float movespeed_MIN = 150.0f;
 	/*
 	移動時の速度係数。
 	*/
 	static float movespeed = movespeed_MIN;
 
 	//LB1ボタンを押して加速しているとき
-	if (g_pad[0].IsPress(enButtonLB1))
+	if ((g_pad[0].IsPress(enButtonLB1)) && (EnergyOutFlag == false))
 	{
-		if (movespeed < movespeed_MAX) {
-			movespeed += 800.0f;
+		//ブースト開始から30フレームはクイックブースト。
+		if (boostTime <= 10.0f) {
+			movespeed = movespeed_QB;
+			Energy -= 20.0f;  //エナジー消費
+			boostTime++;
+		}
+		else {
+			//クイックブースト終了後は速度を下げる。
+			if (movespeed > movespeed_MAX) {
+				movespeed -= (movespeed_QB- movespeed_MAX);
+				Energy -= 5.0f;  //エナジー消費
+			}
+			else {
+				movespeed = movespeed_MAX;
+				Energy -= 5.0f;  //エナジー消費
+			}
+			
 		}
 		m_model.DirectionLight_Red01(4.0f);
+		MoveFlag = true;
 	}
 	//LB1ボタンを押しておらず、加速していないとき
 	else {
@@ -164,19 +212,35 @@ void Player::MoveEffect()
 			movespeed -= 20.0f;
 		}
 		m_model.DirectionLight_ReturnRed(4.0f);
+		MoveFlag = false;
+		boostTime = 0.0f;
 	}
 	//左スティックの入力量を受け取る。
 	lStick_x = g_pad[0].GetLStickXF()*movespeed;
 	lStick_y = g_pad[0].GetLStickYF()*movespeed;
+
+	if ((lStick_x == 0.0f) && (lStick_y == 0.0f)) {
+		m_movese.Stop();
+	}
+	else {		
+		m_movese.Play(true);
+	}
 }
 
-void Player::Player_Bullet_Controller()
+void Player::Bullet_Missile_Controller()
 {
+	//ミサイル発射ボタンが押されていたらtrueにする。
+	static bool M_Lockonflag = false;
+
+	CQuaternion qBullet= CQuaternion::Identity();
+	qBullet.SetRotationDeg(m_rite, -(g_pad[0].GetRStickYF()*20.0f));
+	qBullet.Multiply(Bullet_vector);
+
 	//射撃ボタンが押されているか判定。
 	if (g_pad[0].IsPress(enButtonRB2))
 	{
 		//射撃処理。
-		G_Player_BulletManager().bulletShot(m_position, m_forward);
+		G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
 		//bulletManager->Shot(m_position, m_forward);
 
 		//プレイヤーを正面に向かせるために、回転を固定する。
@@ -187,83 +251,89 @@ void Player::Player_Bullet_Controller()
 		//player_rotationFlag = true;
 	}
 	G_Player_BulletManager().Update();
+
+	//ミサイルボタンが押されているか判定。
+	if (g_pad[0].IsPress(enButtonRB1))
+	{
+		//射撃処理。
+		G_Player_MissileManager().missileLock(m_position, m_forward, camera_forward);
+		M_Lockonflag = true;
+	}
+	else {
+		if (M_Lockonflag == true) {
+			//ボタンを離したので発射。
+			G_Player_MissileManager().missileShot(m_position, m_forward, camera_forward);
+			//発射したのでフラグを元に戻す。
+			M_Lockonflag = false;
+		}
+	}
+	G_Player_MissileManager().Update();
 }
 
+void Player::Energycontrol()
+{
+	//エナジー切れ
+	if (Energy <= 0.0f) {
+		Energy = 0.0f;
+		EnergyOutFlag = true;
+	}
+
+	//加速もジャンプもしていないときはエナジーを回復する。
+	if ((MoveFlag == false) && (JumpFlag == false)){
+		if (Energy<Energy_MAX) {
+			if (m_charaCon.IsOnGround()) {
+				//接地時にエナジー回復
+				Energy += 5.0f;
+			}
+		}
+		else {
+			Energy = Energy_MAX;
+			EnergyOutFlag = false;
+		}
+	}
+	m_gauge->Energy_meter(Energy, Energy_MAX);
+}
 
 void Player::Player_Jump()
 {
-	//飛行しているかを判定するフラグ。
-	static bool FlightFlag = false;
-	/*
-	飛行直前に上昇中か落下中かを判定するフラグ。
-	trueで上昇中。falseで落下中。
-	*/
-	static bool Flight_moveSpeedFlag = true;
-	//空中飛行。
-	//LB1ボタンが押されたとき
-	if (g_pad[0].IsTrigger(enButtonX))
-	{
-		//飛行しておらず、尚且つプレイヤーが上昇中か落下中(地面についていない)なら
-		if ((FlightFlag == false) && (m_moveSpeed.y != 0.0f)) {
-			//飛行する。
-			FlightFlag = true;
-			//直前に上昇中か落下中かを判定する。
-			if (m_moveSpeed.y > 0.0f) {
-				//上昇中。
-				Flight_moveSpeedFlag = true;
-			}
-			else {
-				//落下中。
-				Flight_moveSpeedFlag = false;
-			}
-		}
-		else {//飛行していれば
-			  //飛行を止める。
-			FlightFlag = false;
-		}
-	}
+	//飛行中かを格納する。
+	static bool flyFlag = false;
 
-	if (FlightFlag == false) {
-		//非飛行時。
-
-		//Aボタンが押されたら
-		if (g_pad[0].IsPress(enButtonA)) {
-			//ジャンプする。
-			if (m_moveSpeed.y < 0.0f) {
-				m_moveSpeed.y += 350.0f;
-			}
-			m_moveSpeed.y += 50.0f;	//上方向に速度を設定して、
-			m_charaCon.Jump();		//キャラクターコントローラーにジャンプしたことを通知する。
+	//Aボタンが押されたら
+	if ((g_pad[0].IsPress(enButtonA))&&(EnergyOutFlag==false)) {
+		//ジャンプする。
+		if (m_moveSpeed.y < 0.0f) {
+			m_moveSpeed.y += 350.0f;
 		}
-		else {
-			m_moveSpeed.y -= 200.0f;
-		}
+		m_moveSpeed.y += 50.0f;	//上方向に速度を設定して、
+		m_charaCon.Jump();		//キャラクターコントローラーにジャンプしたことを通知する。
+		Energy -= 5.0f;  //エナジー消費
+		JumpFlag = true;  //ジャンプボタンが押された
+		m_Jumpse.Play(true);
 	}
 	else {
-		//飛行時。
-		//滑らかに空中停止する。
-		if (m_moveSpeed.y != 0.0f) {
-			if (Flight_moveSpeedFlag == true) {
-				//直前に上昇中のとき
-				if (m_moveSpeed.y > 0.0f) {
+		//重力
+		m_moveSpeed.y -= 200.0f;
+		JumpFlag = false;
+		m_Jumpse.Stop();
+	}
+	if (!m_charaCon.IsOnGround()) {
+		flyFlag = true;
+	}
 
-					m_moveSpeed.y -= 150.0f;
-				}
-				else {
-					m_moveSpeed.y = 0.0f;
-				}
+	if (flyFlag==true) {
+		//飛行中に着地したら
+		if (m_charaCon.IsOnGround()) {
+			//効果音を鳴らす。
+			static int m_playSENo = 0;
+			if (m_se[-(m_playSENo - 2)].IsPlaying()) {
+				m_se[-(m_playSENo - 2)].Stop();
 			}
-			else {
-				//直前に落下中のとき
-				if (m_moveSpeed.y < 0.0f) {
-
-					m_moveSpeed.y += 350.0f;
-
-				}
-				else {
-					m_moveSpeed.y = 0.0f;
-				}
-			}
+			m_playSENo++;
+			m_playSENo = m_playSENo % 3;
+			m_se[m_playSENo].Play(false);
+			
+			flyFlag = false;
 		}
 	}
 }

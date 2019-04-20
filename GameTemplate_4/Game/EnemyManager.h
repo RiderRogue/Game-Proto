@@ -34,7 +34,8 @@ private:
 	*@brief	敵の死亡処理。
 	*/
 	void Deleteenemy();
-	static const int Enemy_NUM = 5;       //敵の配列の数。
+	static const int Enemy_NUM = 10;       //敵の配列の数。
+	static const int LockonEnemy_NUM = 3;  //一度にロックオンできる敵の数。
 	EnemyState enemy_slot[Enemy_NUM];
 };
 

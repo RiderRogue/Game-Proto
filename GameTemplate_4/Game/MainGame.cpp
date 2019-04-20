@@ -21,21 +21,20 @@ void MainGame::OnDestroy()
 	DeleteGO(FindGO<Player>("Player"));
 	DeleteGO(level);
 	G_EnemyManager().AllDeleteEnemy();
-	DeleteGO(m_gauge);
 }
 
 bool MainGame::Start()
 {
 	NewGO<Level>(2, "Level");
-
+	
 	NewGO<Player>(1, "Player");
 	level = FindGO<Level>("Level");
-	level->Init(L"Assets/level/stage_02.tkl", nullptr);
+	level->Init(L"Assets/level/level01_proto02.tkl", nullptr);
 	NewGO<Gamecamera>(2, "Gamecamera");
 	G_EnemyManager().Start();
 	G_EnemyManager().spawnenemy({ 100.0f,0.0f,100.0f });
 	G_EnemyManager().spawnenemy({ 200.0f,0.0f,180.0f });
-	m_gauge = NewGO<gauge>(0, "Gauge");
+	
 	return true;
 }
 

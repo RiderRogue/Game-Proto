@@ -30,10 +30,12 @@ public:
 	/*!
 	*@brief プレイヤーの前方を示す単位ベクトルから、プレイヤーの後ろ向きの単位ベクトルを取得する。
 	*/
-	void SetPlayer_Cameravector()
+	CVector3 SetPlayer_Cameravector()
 	{
-		Player_Cameravector = player->Getforward();
-		Player_Cameravector *= -1;
+		CVector3 P_CVector;
+		P_CVector = player->Getforward();
+		P_CVector *= -1;
+		return P_CVector;
 	}
 
 	/*!
@@ -68,8 +70,14 @@ public:
 	*/
 	void Init();
 private:
+	const float Camera_Length_MAX = 200.0f;
+	const float Camera_Length_MIN = 200.0f;
+	float Camera_Length = Camera_Length_MAX;
+	float Player_moveside = 0.0f;
 	float rStick_x;                                     //右スティックの横の入力量。
 	float rStick_y;                                     //右スティックの縦の入力量。
+	float lStick_x;                                     //左スティックの横の入力量。
+	float lStick_y;                                     //左スティックの縦の入力量。
 	CVector3 Player_position = CVector3::Zero();        //プレイヤーの座標を格納する。
 	CVector3 Camera_vector = CVector3::Zero();          //カメラの座標を代入。
 	Player* player;                                     //プレイヤーの座標を取得するために使う。
@@ -80,4 +88,5 @@ private:
 	CQuaternion m_rotation = CQuaternion::Identity();   //カメラの任意軸回転。
 	CQuaternion qBias = CQuaternion::Identity();
 	float rotation_speed;                               //カメラの回転スピード。
+	bool boostflag = false;                             //ブースト時のフラグ。
 };

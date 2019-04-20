@@ -10,7 +10,12 @@ public:
 	void Update();
 	void PostDraw();
 private:
-	Sprite m_title;
-	CVector3 m_position = CVector3::Zero();
+	Sprite m_titlebase;
+	Sprite m_title01;
+	Sprite m_title02;
+	CVector3 m_position_base = CVector3::Zero();
+	CVector3 m_position01 = CVector3::Zero();
+	CVector3 m_position02 = CVector3::Zero();
+	bool title_startflag = false;
 };
 
