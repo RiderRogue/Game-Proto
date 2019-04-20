@@ -149,11 +149,11 @@ namespace YTEngine {
 		*@brief	ゲームオブジェクトの検索のヘルパー関数。
 		*@param[in]	objectName	ゲームオブジェクトの名前。
 		*/
-		template<class T>
+		/*template<class T>
 		static inline T* FindGO(const char* objectName)
 		{
 			return GameObjectManager().FindGameObject<T>(objectName);
-		}
+		}*/
 		/*!
 		*@brief	指定したタグのいずれかがが含まれるゲームオブジェクトを検索して、見つかった場合指定されたコールバック関数を呼び出す。
 		*/
