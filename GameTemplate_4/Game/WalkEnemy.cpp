@@ -14,7 +14,7 @@ WalkEnemy::~WalkEnemy()
 bool WalkEnemy::Start()
 {
 	//敵のHPの最大値を設定。
-	const int enemy_HP_MAX = 200;
+	const int enemy_HP_MAX = 10;
 
 	//cmoファイルの読み込み。
 	m_model.Init(L"Assets/modelData/unityChan.cmo");
@@ -36,6 +36,7 @@ bool WalkEnemy::Start()
 	);
 	player = FindGO<Player>("Player");
 	enemy_HP = enemy_HP_MAX;
+	m_position_center = { m_position.x,m_position.y + (enemy_height / 2),m_position.z };
 	return true;
 }
 void WalkEnemy::Update()
@@ -55,12 +56,10 @@ void WalkEnemy::Update()
 
 	m_position = m_charaCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
 
-	CVector3 m_position_center = { m_position.x,m_position.y + (enemy_height / 2),m_position.z };
-	bool bullethitflag = G_Player_BulletManager().EnemyHit(m_position_center);
-	if (bullethitflag == true) {
-		//被弾していれば
-		enemyDamage(10);//10引く。
-	}
+	//ダメージ処理。
+	m_position_center = { m_position.x,m_position.y + (enemy_height / 2),m_position.z };
+
+	EnemyShot();
 	//ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
 }

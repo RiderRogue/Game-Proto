@@ -36,6 +36,7 @@
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="Player_MissileManager.cpp" />
     <ClCompile Include="WalkEnemy.cpp" />
+    <ClCompile Include="EnemyBulletManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h" />
@@ -55,6 +56,7 @@
     <ClInclude Include="Missile.h" />
     <ClInclude Include="Player_MissileManager.h" />
     <ClInclude Include="WalkEnemy.h" />
+    <ClInclude Include="EnemyBulletManager.h" />
   </ItemGroup>
   <ItemGroup>
     <MeshContentTask Include="Assets\modelData\unityChan.fbx">
@@ -84,6 +86,11 @@
     <MeshContentTask Include="Assets\modelData\road_zyuzi.FBX" />
     <MeshContentTask Include="Assets\modelData\wall.FBX" />
     <MeshContentTask Include="Assets\modelData\Plaza.FBX" />
+    <MeshContentTask Include="Assets\modelData\bill01.FBX" />
+    <MeshContentTask Include="Assets\modelData\EnemyBullet.FBX" />
+    <MeshContentTask Include="Assets\modelData\sora.FBX" />
+    <MeshContentTask Include="Assets\modelData\sora_2.fbx" />
+    <MeshContentTask Include="Assets\modelData\bill02.FBX" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\level\stage_01.tkl">
@@ -95,6 +102,7 @@
     <None Include="Assets\level\level01.tkl" />
     <None Include="Assets\level\level01_proto.tkl" />
     <None Include="Assets\level\level01_proto02.tkl" />
+    <None Include="Assets\level\stage_03.tkl" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\modelData\utc_nomal.tga" />

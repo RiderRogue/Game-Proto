@@ -2,8 +2,9 @@
 /*!
 * @brief	エネミー(敵)。
 */
-#include "Player.h"
-#include "character/CharacterController.h"
+#include"Player.h"
+#include "character/EnemyController.h"
+#include "EnemyBulletManager.h"
 using namespace YTEngine;
 class Enemy : public IGameObject
 {
@@ -51,6 +52,12 @@ public:
 	{
 		My_slotNumber = slotNumber;
 	}
+
+	//敵弾の発射処理。
+	virtual void EnemyShot();
+
+	//2つのベクトルの角度を角度表記(degree)で返す。
+	float VectorAngleDeg(CVector3 c);
 protected:
 	CMatrix mRot;                                       //敵の回転行列。
 	CVector3 m_moveSpeed = CVector3::Zero();            //敵の移動速度。
@@ -61,12 +68,16 @@ protected:
 	CVector3 m_position = CVector3::Zero();             //敵の座標。
 	CVector3 m_position_center;                         //当たり判定などで扱う中心座標。
 	SkinModel m_model;									//スキンモデル。
-	CharacterController m_charaCon;                     //敵の剛体。
+	EnemyController m_charaCon;                     //敵の剛体。
 	int enemy_HP;                                       //敵のHP。
 	const float enemy_height = 100.0f;		                //敵の高さ。
 	const float enemy_weight = 30.0f;                         //敵の半径。
+	bool enemy_damageflag = false;                          //敵のダメージ判定。
 	bool enemy_deathflag = false;                       //敵の死亡フラグ。Managerに使う。
     Player* player;                                     //プレイヤーのポインタ。
 	int My_slotNumber;              //EnemyManager上で自身が存在しているスロット番号。
+	int count = 0;                     //敵弾の発射間隔。
+	int damagecount = 0;
+	float BulletRange;              //射程範囲。
 };
 

@@ -164,6 +164,14 @@ namespace YTEngine {
 		void SetDirectionLight(float x, float y, float z);
 
 		/*!
+		*@brief ダメージで赤く光らせる。
+		*/
+		void SetDirectionDamage();
+		/*!
+		*@brief ダメージ後、元に戻す。。
+		*/
+		void ReturnDirectionDamage();
+		/*!
 		*@brief ディレクションライト0の取得。
 		*/
 		CVector3 GetDirectionLight0() {

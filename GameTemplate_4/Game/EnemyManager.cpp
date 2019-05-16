@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "EnemyManager.h"
 #include "WalkEnemy.h"
+#include "Player_BulletManager.h"
+#include "EnemyBulletManager.h"
 //#include "GameBase/GameBase.h"
 
 EnemyManager::EnemyManager()
@@ -18,25 +20,27 @@ void EnemyManager::Start()
 		//flagをfalseにして、生成されていないように初期化する。
 		enemy_slot[i].Aliveflag = false;
 	}
+	//EnemyBulletManagerの初期化。
+	G_EnemyBulletManager().Start();
 }
 
 void EnemyManager::Update()
 {
 	for (int i = 0; i < Enemy_NUM; i++) {
-		//生きている奴のみ
+		//生きている奴のみ当たり判定をとる。
 		if (enemy_slot[i].Aliveflag == true) {
-			//BulletManagerとEnemyManagerで当たり判定をとる。
-			bool bullethitflag = G_Player_BulletManager().EnemyHit(enemy_slot[i].enemy->GetPosition_center());
-			if (bullethitflag == true) {
-				//被弾していれば
-				//10引く。
-				enemy_slot[i].enemy->enemyDamage(10);
-			}
+			G_Player_BulletManager().EnemyHit(enemy_slot[i].enemy);
+			
 		}
 	}
-
-	//当たり判定。
+	G_EnemyBulletManager().Update();
+	//死亡判定。
 	Deleteenemy();
+}
+
+void EnemyManager::EnemyBulletDraw()
+{
+	G_EnemyBulletManager().Draw();
 }
 
 void EnemyManager::spawnenemy(CVector3 position)
@@ -44,7 +48,7 @@ void EnemyManager::spawnenemy(CVector3 position)
 	for (int i = 0; i < Enemy_NUM; i++) {
 		if (enemy_slot[i].Aliveflag == false) {
 			//敵オブジェクトを生成&生存フラグを上げておく。
-			enemy_slot[i].enemy = NewGO<WalkEnemy>(0);
+			enemy_slot[i].enemy = NewGO<Enemy>(0);
 			enemy_slot[i].enemy->SetPosition(position);
 			enemy_slot[i].enemy->SetslotNumber(i);
 			enemy_slot[i].Aliveflag = true;
@@ -77,5 +81,6 @@ void EnemyManager::AllDeleteEnemy()
 			enemy_slot[i].Aliveflag = false;
 		}
 	}
-
+	//EnemyBulletManagerの初期化。
+	G_EnemyBulletManager().OnDestroy();
 }

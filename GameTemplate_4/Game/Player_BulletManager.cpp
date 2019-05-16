@@ -37,6 +37,7 @@ void Player_BulletManager::Start()
 		bullet[i].flag = false;
 		bullet[i].desflag = false;
 		bullet[i].m_model.Init(L"Assets/modelData/bullet.cmo");
+		//bullet[i].m_model.Init(L"Assets/modelData/EnemyBullet.cmo");
 		bullet[i].m_model.SetDirectionLight(5.0f, 5.0f, 0.0f);
 	}
 
@@ -187,29 +188,28 @@ void Player_BulletManager::missileShot(const CVector3 p_position, const CVector3
 		}
 	}
 }
-bool Player_BulletManager::EnemyHit(CVector3 m_Eposition)
+void Player_BulletManager::EnemyHit(Enemy* enemy)
 {
 	for (int i = 0; i < Player_Bullet_NUM; i++) {
 		//発射している弾だけ
 		if (bullet[i].flag == true) {
-			CVector3 v = bullet[i].m_position - m_Eposition;
+			CVector3 v = bullet[i].m_position - enemy->GetPosition_center();
 			float len = v.Length();//長さ
 								   //敵と衝突した(距離が30.0f以下なら)ら
 			if (len <= 90.0f) {
 				//当たった弾の死亡フラグをあげる。
 				bullet[i].desflag = true;
-				//敵と弾の距離を測り、当たっていればtrueを返す。
-				return true;
+				//敵と弾の距離を測り、当たっていればダメージ。
+				enemy->enemyDamage(BulletDamage);
 			}
 		}
 	}
-	return false;
 }
 
 void Player_BulletManager::Normalbullet_move(int bulletNumber)
 {
 	CVector3 m_moveSpeed = CVector3::Zero();
-	m_moveSpeed += bullet[bulletNumber].m_forward*bulletmoveSpeed*100.0f;
+	m_moveSpeed += bullet[bulletNumber].m_forward*bulletmoveSpeed;
 	bullet[bulletNumber].m_position = bullet[bulletNumber].m_bulletCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
 																															//ワールド行列の更新。
 	bullet[bulletNumber].m_model.UpdateWorldMatrix(bullet[bulletNumber].m_position, CQuaternion::Identity(), CVector3::One());

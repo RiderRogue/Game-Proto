@@ -100,6 +100,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBulletManager.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="GameBase\GameBase.cpp" />
     <ClCompile Include="Gamecamera.cpp" />
@@ -119,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBulletManager.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="GameBase\GameBase.h" />
     <ClInclude Include="Gamecamera.h" />
@@ -133,9 +135,12 @@
     <ClInclude Include="WalkEnemy.h" />
   </ItemGroup>
   <ItemGroup>
+    <MeshContentTask Include="Assets\modelData\bill01.FBX" />
+    <MeshContentTask Include="Assets\modelData\bill02.FBX" />
     <MeshContentTask Include="Assets\modelData\books.fbx" />
     <MeshContentTask Include="Assets\modelData\books1.fbx" />
     <MeshContentTask Include="Assets\modelData\bullet.FBX" />
+    <MeshContentTask Include="Assets\modelData\EnemyBullet.FBX" />
     <MeshContentTask Include="Assets\modelData\konkuri.rando.fbx" />
     <MeshContentTask Include="Assets\modelData\level_proto.fbx" />
     <MeshContentTask Include="Assets\modelData\Player_Robo.FBX" />
@@ -147,6 +152,8 @@
     <MeshContentTask Include="Assets\modelData\road_slope02.FBX" />
     <MeshContentTask Include="Assets\modelData\road_slope03.FBX" />
     <MeshContentTask Include="Assets\modelData\road_zyuzi.FBX" />
+    <MeshContentTask Include="Assets\modelData\sora.FBX" />
+    <MeshContentTask Include="Assets\modelData\sora_2.fbx" />
     <MeshContentTask Include="Assets\modelData\stage_base01.FBX" />
     <MeshContentTask Include="Assets\modelData\unityChan.fbx">
       <ContentOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\Assets\modelData\%(Filename).cmo</ContentOutput>
@@ -160,6 +167,7 @@
     <None Include="Assets\level\level01_proto02.tkl" />
     <None Include="Assets\level\stage_01.tkl" />
     <None Include="Assets\level\stage_02.tkl" />
+    <None Include="Assets\level\stage_03.tkl" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\modelData\utc_nomal.tga" />

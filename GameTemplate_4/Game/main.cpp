@@ -17,7 +17,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//ƒJƒƒ‰‚ğ‰Šú‰»B
 	g_camera3D.SetPosition({ 0.0f, 100.0f, 300.0f });
 	g_camera3D.SetTarget({ 0.0f, 100.0f, 0.0f });
-	g_camera3D.SetFar(10000.0f);
+	g_camera3D.SetFar(50000.0f);
 	
 	int gameObjectPrioMax = 32;
 	g_camera2D.SetUpdateProjMatrixFunc(Camera::enUpdateProjMatrixFunc_Ortho);

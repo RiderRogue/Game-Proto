@@ -169,6 +169,7 @@
     <ClInclude Include="character\BulletController.h" />
     <ClInclude Include="character\CharacterController.h" />
     <ClInclude Include="ConstantBufferGPU.h" />
+    <ClInclude Include="character\EnemyController.h" />
     <ClInclude Include="GameObject\GameObjectManager.h" />
     <ClInclude Include="GameObject\GameObject.h" />
     <ClInclude Include="GaussianBlur.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="character\BulletController.cpp" />
     <ClCompile Include="character\CharacterController.cpp" />
     <ClCompile Include="ConstantBufferGPU.cpp" />
+    <ClCompile Include="character\EnemyController.cpp" />
     <ClCompile Include="GameObject\GameObjectManager.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="GaussianBlur.cpp" />

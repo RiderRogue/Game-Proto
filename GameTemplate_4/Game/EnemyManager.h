@@ -1,5 +1,5 @@
 #pragma once
-#include "Enemy.h"
+class Enemy;
 using namespace YTEngine;
 
 struct EnemyState {
@@ -13,6 +13,7 @@ public:
 	~EnemyManager();
 	void Start();
 	void Update();
+	void EnemyBulletDraw();
 	/*!
 	*@brief	敵のスポーン。
 	*/

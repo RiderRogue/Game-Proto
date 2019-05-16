@@ -1,6 +1,7 @@
 #pragma once
 
 #include "character/BulletController.h"
+#include "Enemy.h"
 using namespace YTEngine;
 struct Player_BulletState {
 	bool flag;//弾丸が発射中かどうか
@@ -66,7 +67,7 @@ public:
 	/*!
 	*@brief	敵との当たり判定。
 	*/
-	bool EnemyHit(CVector3 m_Eposition);
+	void EnemyHit(Enemy* enemy);
 
 	/*!
 	*@brief	インスタンスの取得。
@@ -82,9 +83,10 @@ private:
 	Player_BulletState bullet[Player_Bullet_NUM];  //弾丸の配列。    
 	Player_MissileState missile[Player_Missile_NUM];//ミサイルの配列。
 	SkinModel m_modelproto;						   //スキンモデルのプロトタイプ。
-	const float bulletmoveSpeed = 40.0f;           //弾速。
+	const float bulletmoveSpeed = 10000.0f;           //弾速。
 	int count = 0;
 	int missile_ammo_NUM;//ミサイルの弾薬の数。
+	const int BulletDamage = 10;
 };
 
 //Player_BulletManagerのインスタンスを取得。

@@ -17,7 +17,7 @@ namespace YTEngine {
 		CharacterController() {
 
 		}
-		~CharacterController()
+		virtual ~CharacterController()
 		{
 			RemoveRigidBoby();
 		}
@@ -34,7 +34,7 @@ namespace YTEngine {
 		*@param[in, out]	moveSpeed		移動速度。内部で重力加速が計算され、その結果がmoveSpeedに反映されます。
 		*@return 移動後のキャラクターの座標。
 		*/
-		const CVector3& Execute(float deltaTime, CVector3& moveSpeed);
+		virtual const CVector3& Execute(float deltaTime, CVector3& moveSpeed);
 		/*!
 		* @brief	座標を取得。
 		*/
@@ -89,7 +89,7 @@ namespace YTEngine {
 		/*!
 		* @brief	剛体を物理エンジンから削除。。
 		*/
-		void RemoveRigidBoby();
+		virtual void RemoveRigidBoby();
 
 		/*!
 		* @brief   このフレームで衝突したかどうかを返す。
@@ -99,13 +99,13 @@ namespace YTEngine {
 		{
 			return hitFlag;
 		}
-	private:
+	protected:
 		CVector3 			m_position = CVector3::Zero();	//座標。
 		bool 				m_isJump = false;				//ジャンプ中？
 		bool				m_isOnGround = true;			//地面の上にいる？
 		CapsuleCollider		m_collider;						//コライダー。
 		float				m_radius = 0.0f;
-		float				m_height = 0.0f;
+		float				m_height = 0.0f;                //高さ。
 		RigidBody			m_rigidBody;					//剛体。
 		int Flag = 0;										//キャラクターのフラグ
 		bool hitFlag = false;                  //地面や壁にぶつかったことを知らせるフラグ。

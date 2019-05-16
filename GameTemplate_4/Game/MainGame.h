@@ -9,10 +9,11 @@ public:
 	~MainGame();
 	bool Start();
 	void Update();
-	void PostDraw();
+	void Draw();
 	void OnDestroy();
 private:
 	Level * level;
 	float s_x=1.0f;
+	SkinModel m_model;
 };
 

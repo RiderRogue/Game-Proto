@@ -32,18 +32,8 @@ void gauge::Update()
 	
 	m_energy_frame.Update({ -635.0f,-350.0f,0.0f }, CQuaternion::Identity(), { 1.0f,1.0f,1.0f }, { 0.0f,0.0f });
 	m_energy_meter.Update({ -630.0f,-345.0f,0.0f }, CQuaternion::Identity(), { 1.0,e_gauge,1.0f }, { 0.0f,0.0f });
-
 }
 
-void gauge::HP_meter(float hp,float hpMAX)
-{
-	e_hp = hp / hpMAX;
-}
-
-void gauge::Energy_meter(float energy,float energyMAX)
-{
-	e_gauge = energy / energyMAX;
-}
 
 void gauge::PostDraw()
 {

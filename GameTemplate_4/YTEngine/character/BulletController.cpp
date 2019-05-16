@@ -7,11 +7,19 @@ namespace YTEngine {
 		struct SweepResultBullet : public btCollisionWorld::ConvexResultCallback
 		{
 			bool isHit = false;						//衝突フラグ。
+			bool E_bulletisHit = false;          //敵弾とプレイヤーの衝突フラグ。
 			btCollisionObject* me = nullptr;					//自分自身。自分自身との衝突を除外するためのメンバ。
 																//衝突したときに呼ばれるコールバック関数。
 			virtual	btScalar	addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 			{
-				if (convexResult.m_hitCollisionObject == me|| convexResult.m_hitCollisionObject->getUserIndex()== enCollisionAttr_Player) {
+				if (me->getUserIndex() == enCollisionAttr_EnemyBullet
+					&& convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Player) {
+					E_bulletisHit = true;
+				}
+				if (convexResult.m_hitCollisionObject == me
+					|| convexResult.m_hitCollisionObject->getUserIndex()== enCollisionAttr_Player
+					|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Enemy
+					|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_EnemyBullet) {
 					//自分に衝突した。
 					return 0.0f;
 				}
@@ -53,6 +61,7 @@ namespace YTEngine {
 	const CVector3& BulletController::Execute(float deltaTime, CVector3& moveSpeed)
 	{
 		//このフレームでの衝突をはかるために初期化。
+		E_bullethitFlag = false;
 		hitFlag = false;
 		//次の移動先となる座標を計算する。
 		CVector3 nextPosition = m_position;
@@ -83,6 +92,11 @@ namespace YTEngine {
 				callback.me = m_rigidBody.GetBody();
 				//衝突検出。
 				g_physics.ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
+				if (callback.E_bulletisHit) {
+					//敵弾がプレイヤーに当たった。
+					//衝突したのでtrueを返す。
+					E_bullethitFlag = true;
+				}
 				if (callback.isHit) {
 					//当たった。
 					//壁。

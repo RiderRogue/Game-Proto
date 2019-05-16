@@ -3,12 +3,10 @@
 * @brief	プレイヤー。
 */
 #include "character/CharacterController.h"
-#include "Player_BulletManager.h"
-#include "Player_MissileManager.h"
-#include "gauge.h"
+
 #include "sound/SoundEngine.h"
 #include "sound/SoundSource.h"
-
+class gauge;
 using namespace YTEngine;
 class Player : public IGameObject
 {
@@ -63,6 +61,13 @@ public:
 	CVector3 Getposition()
 	{
 		return m_position;
+	}
+	/*!
+	*@brief	当たり判定などで扱う、中心座標の取得。
+	*/
+	CVector3 GetPosition_center()
+	{
+		return m_position_center;
 	}
 	/*!
 	*@brief	プレイヤーの移動速度を返す。
@@ -156,6 +161,19 @@ public:
 	*@brief プレイヤーのエナジーの管理。
 	*/
 	void Energycontrol();
+
+	/*
+	*@brief プレイヤーのHPの管理。
+	*/
+	void HPcontrol();
+
+	void Damage(float damage) {
+		HP -= damage;
+		if (HP <= 0.0f) {
+			0.0f;
+		}
+	}
+
 private:
 	
 
@@ -164,16 +182,16 @@ private:
 	CVector3 m_forward = CVector3::Zero();				//プレイヤーの前方。
 	CVector3 m_rite = CVector3::Zero();                 //プレイヤーの右側。
 	CVector3 m_position = CVector3::Zero();             //プレイヤーの座標。
+	CVector3 m_position_center;                         //当たり判定などで扱う中心座標。
 	CVector3 camera_forward = CVector3::Zero();			//ゲームカメラの前方。
 	CVector3 camera_rite = CVector3::Zero();            //ゲームカメラの右方向。
 	CVector3 Bullet_vector = CVector3::Zero();            //射撃方向。
-	CVector3 m_targetSight_position = { 0.0f,130.0f,0.0f };//ターゲットサイト。
+	CVector3 m_targetSight_position = { 0.0f,140.0f,0.0f };//ターゲットサイト。
 	SkinModel m_model;									//スキンモデル。
 	CharacterController m_charaCon;                     //プレイヤーの剛体。
 	CQuaternion m_rotation = CQuaternion::Identity();   //キャラの回転
 	CQuaternion qBias = CQuaternion::Identity();
 	ID3D11ShaderResourceView* g_normalMapSRV = nullptr; //法線マップ。
-	Player_BulletManager* bulletManager;
 	Sprite targetSight;
 	gauge* m_gauge;
 	CSoundEngine m_soundEngine;				//サウンドエンジン。
@@ -185,16 +203,19 @@ private:
 	float m_moveSpeed_side = 0.0f;          //プレイヤーの横方向の移動速度。
 	float lStick_x;                         //左スティックの横の入力量。
 	float lStick_y;                         //左スティックの縦の入力量。
-	float player_height = 100.0f;		    //プレイヤーの高さ。
+	float player_height = 150.0f;		    //プレイヤーの高さ。
 	float camera_rot_angle = 0.0f;          //ゲームカメラが回る方向を示す(-1～1の範囲)。
 	float camera_rot_speed = 0.0f;          //ゲームカメラの回転スピード。
-	float Energy;
 	float bullet_angle = 0.0f;              //射角。
 	float boostTime = 0.0f;                 //加速している時間。
+	float HP;
+	float Energy;
+	const float HP_MAX = 1000.0f;
 	const float Energy_MAX = 1000.0f;
 	bool EnergyOutFlag = false;             //エナジー切れを検知。
 	bool MoveFlag = false;                  //加速しているかを保存。      
 	bool JumpFlag = false;        
-	bool player_rotationFlag = true;        //プレイヤーが回転するかを判定するフラグ。trueで回転。	                           
+	bool player_rotationFlag = true;        //プレイヤーが回転するかを判定するフラグ。trueで回転。	  
+	bool player_desflag = false;
 };
 

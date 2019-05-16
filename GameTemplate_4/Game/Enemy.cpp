@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Enemy.h"
-
+#include "Physics/CollisionAttr.h"
 
 Enemy::Enemy()
 {
@@ -16,7 +16,7 @@ bool Enemy::Start()
 {
 	//敵のHPの最大値を設定。
 	const int enemy_HP_MAX = 100;
-
+	BulletRange = 4000.0f;
 	//cmoファイルの読み込み。
 	m_model.Init(L"Assets/modelData/unityChan.cmo");
 	mRot.MakeRotationFromQuaternion(m_rotation);
@@ -35,8 +35,16 @@ bool Enemy::Start()
 		enemy_height,
 		m_position
 	);
+	//敵弾の半径。
+	float radius = 10.0f;
+	m_charaCon.Init_bullet(
+		radius,
+		m_position
+	);
+	m_charaCon.GetRigidBody()->GetBody()->setUserIndex(enCollisionAttr_Enemy);
 	player = FindGO<Player>("Player");
 	enemy_HP = enemy_HP_MAX;
+	m_position_center = m_charaCon.Getbullet_position();
 	return true;
 }
 
@@ -53,15 +61,30 @@ void Enemy::Update()
 	m_rite.z = mRot.m[0][2];
 	m_rite.Normalize();
 
+	m_moveSpeed = m_rite * (-100.0f);
 	//m_moveSpeed += {1.0f,0.0f,0.0f};
-	m_position = m_charaCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
+	m_position = m_charaCon.EnemyExecute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
+	//ダメージ処理。
+	m_position_center = m_charaCon.Getbullet_position();
 
-	CVector3 m_position_center = { m_position.x,m_position.y + (enemy_height / 2),m_position.z };
-	bool bullethitflag = G_Player_BulletManager().EnemyHit(m_position_center);
-	if (bullethitflag == true) {
-		//被弾していれば
-		enemyDamage(10);//10引く。
+	EnemyShot();
+
+	if (damagecount >= 2) {
+		m_model.ReturnDirectionDamage();
+		damagecount = 0;
 	}
+	if (damagecount==1) {
+		m_model.SetDirectionDamage();
+		damagecount++;
+	}
+	
+	if (count >= 1) {
+		count++;
+	}
+	if (count >= 5) {
+		count = 0;
+	}
+
 	//ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
 }
@@ -73,15 +96,57 @@ void Enemy::Draw()
 		g_camera3D.GetProjectionMatrix()
 	);
 }
+void Enemy::EnemyShot()
+{
+	//敵弾の発射間隔を作る。
+	if (count == 0) {
+		//プレイヤーとの距離を求める。
+		CVector3 vDist;
+		vDist.Subtract(player->GetPosition_center(), m_position_center);
+		float distTmp = vDist.Length();
+		//射程範囲内の場合
+		if (distTmp <= BulletRange) {
+			float angle = VectorAngleDeg(vDist);
+			//プレイヤーとの角度が60度以内なら
+			if (angle <= 60.0f)
+			{
+				bool shotFlag = m_charaCon.EnemyofPlayerVector(player->GetPosition_center());
+				//敵からプレイヤーへの射線が通れば、
+				if (shotFlag == false) {
+					//射撃。
+					vDist.Normalize();
+					G_EnemyBulletManager().bulletShot(m_position_center, vDist);
+					count = 1;
+				}
+			}
+		}
+	}
+
+
+
+	
+}
 void Enemy::enemyDamage(int damage)
 {
 	//受けたダメージ分、HPから引く。
 	enemy_HP -= damage;
+	damagecount++;
 
 	if (enemy_HP <= 0) {
 		enemy_deathflag = true;
 		//G_EnemyManager()
 	}
+}
+
+float Enemy::VectorAngleDeg(CVector3 c)
+{
+	c.y = 0.0f;
+	c.Normalize();//向きVectorにする。
+	float kaku = acosf(c.Dot(m_forward));//２つのべクトルの内積のアークコサインを求める。(ラジアン)
+
+	float degree = CMath::RadToDeg(kaku);
+
+	return degree;
 }
 void Enemy::SetShadowCasters()
 {

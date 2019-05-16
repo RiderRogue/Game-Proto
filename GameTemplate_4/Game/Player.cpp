@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "Player.h"
-#include "Physics/CollisionAttr.h"
+#include "gauge.h"
 
+#include "Physics/CollisionAttr.h"
+#include "Player_BulletManager.h"
+#include "Player_MissileManager.h"
+#include "GameBase/GameBase.h"
 using namespace YTEngine;
 Player::Player()
 {
@@ -28,6 +32,7 @@ void Player::OnDestroy()
 
 bool Player::Start()
 {
+	HP = HP_MAX;
 	Energy = Energy_MAX;
 
 	//cmoファイルの読み込み。
@@ -73,6 +78,7 @@ bool Player::Start()
 	m_gauge = NewGO<gauge>(0, "Gauge");
 	//サウンドエンジンを初期化。
 	m_soundEngine.Init();
+	m_position_center = { m_position.x,m_position.y + (player_height / 2),m_position.z };
 
 	//ワンショット再生のSE
 	m_se[0].Init(L"Assets/sound/landing.wav");
@@ -141,12 +147,15 @@ void Player::Update()
 		m_moveSpeed.y = 0.0f;
 	}
 	Player_Jump();
+	//HP管理。
+	HPcontrol();
 	//エナジー管理。
 	Energycontrol();
 	//プレイヤーの攻撃。
 	Bullet_Missile_Controller();
 
 	m_position = m_charaCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
+	m_position_center = { m_position.x,m_position.y + (player_height / 2),m_position.z };
 
 	 //ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
@@ -157,8 +166,11 @@ void Player::Update()
 		m_position
 	);
 
-	targetSight.Update(m_targetSight_position, CQuaternion::Identity(), { 1.0f,1.0f,1.0f });
+	targetSight.Update(m_targetSight_position, CQuaternion::Identity(), { 0.5f,0.5f,1.0f });
 
+	if (player_desflag == true) {
+		FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
+	}
 	//if (g_pad[0].IsTrigger(enButtonA)) {
 	//	//Aボタンが押されたらSEを鳴らす。
 	//	static int m_playSENo = 0;
@@ -176,7 +188,7 @@ void Player::MoveEffect()
 	*/
 	const static float movespeed_QB = 1800.0f;
 	const static float movespeed_MAX = 600.0f;
-	const static float movespeed_MIN = 150.0f;
+	const static float movespeed_MIN = 200.0f;
 	/*
 	移動時の速度係数。
 	*/
@@ -209,7 +221,7 @@ void Player::MoveEffect()
 	//LB1ボタンを押しておらず、加速していないとき
 	else {
 		if (movespeed > movespeed_MIN) {
-			movespeed -= 20.0f;
+			movespeed -= 90.0f;
 		}
 		m_model.DirectionLight_ReturnRed(4.0f);
 		MoveFlag = false;
@@ -232,8 +244,13 @@ void Player::Bullet_Missile_Controller()
 	//ミサイル発射ボタンが押されていたらtrueにする。
 	static bool M_Lockonflag = false;
 
-	CQuaternion qBullet= CQuaternion::Identity();
-	qBullet.SetRotationDeg(m_rite, -(g_pad[0].GetRStickYF()*20.0f));
+	CQuaternion qBullet = CQuaternion::Identity();
+	if (g_pad[0].GetRStickYF()>=0.0f) {
+		qBullet.SetRotationDeg(m_rite, -(g_pad[0].GetRStickYF()*30.0f));
+	}
+	else {
+		qBullet.SetRotationDeg(m_rite, -(g_pad[0].GetRStickYF()*20.0f));
+	}
 	qBullet.Multiply(Bullet_vector);
 
 	//射撃ボタンが押されているか判定。
@@ -270,6 +287,16 @@ void Player::Bullet_Missile_Controller()
 	G_Player_MissileManager().Update();
 }
 
+void Player::HPcontrol()
+{
+	//HP切れ
+	if (HP <= 0.0f) {
+		HP = 0.0f;
+		player_desflag = true;
+	}
+	m_gauge->HP_meter(HP, HP_MAX);
+}
+
 void Player::Energycontrol()
 {
 	//エナジー切れ
@@ -294,6 +321,7 @@ void Player::Energycontrol()
 	m_gauge->Energy_meter(Energy, Energy_MAX);
 }
 
+
 void Player::Player_Jump()
 {
 	//飛行中かを格納する。
@@ -305,7 +333,16 @@ void Player::Player_Jump()
 		if (m_moveSpeed.y < 0.0f) {
 			m_moveSpeed.y += 350.0f;
 		}
-		m_moveSpeed.y += 50.0f;	//上方向に速度を設定して、
+
+		//LB1ボタンを押して加速しているとき
+		if ((g_pad[0].IsPress(enButtonLB1)) && (EnergyOutFlag == false))
+		{
+			m_moveSpeed.y += 150.0f;
+		}
+		else {
+			m_moveSpeed.y += 50.0f;	//上方向に速度を設定して、
+		}
+		
 		m_charaCon.Jump();		//キャラクターコントローラーにジャンプしたことを通知する。
 		Energy -= 5.0f;  //エナジー消費
 		JumpFlag = true;  //ジャンプボタンが押された
@@ -324,7 +361,7 @@ void Player::Player_Jump()
 	if (flyFlag==true) {
 		//飛行中に着地したら
 		if (m_charaCon.IsOnGround()) {
-			//効果音を鳴らす。
+			//効果音(着地音)を鳴らす。
 			static int m_playSENo = 0;
 			if (m_se[-(m_playSENo - 2)].IsPlaying()) {
 				m_se[-(m_playSENo - 2)].Stop();

@@ -111,7 +111,7 @@ void Gamecamera::Update()
 	
 
 	CVector3 Camera_position = player->Getposition() + Camera_vector;
-	Camera_position.y += player->Getheight()+50.0f;
+	Camera_position.y += player->Getheight()+10.0f;
 	//プレイヤーにゲームカメラの前方向と右方向の単位ベクトルを送る。
 	player->SetCamera_forward(m_forward);
 	player->SetCamera_rite(m_rite);

@@ -110,6 +110,20 @@ namespace YTEngine {
 		m_light.directionLight.color[3] = { x, y, z, 1.0f };
 	}
 
+	void SkinModel::SetDirectionDamage(){
+		m_light.directionLight.color[0].x *= 6.0f;
+		m_light.directionLight.color[1].x *= 6.0f;
+		m_light.directionLight.color[2].x *= 6.0f;
+		m_light.directionLight.color[3].x *= 6.0f;
+	}
+
+	void SkinModel::ReturnDirectionDamage() {
+		m_light.directionLight.color[0].x /= 6.0f;
+		m_light.directionLight.color[1].x /= 6.0f;
+		m_light.directionLight.color[2].x /= 6.0f;
+		m_light.directionLight.color[3].x /= 6.0f;
+	}
+
 	void SkinModel::DirectionLight_Red01(float a) {
 		for (int i = 0; i < 4; i++) {
 			if (m_light.directionLight.color[i].x < a) {

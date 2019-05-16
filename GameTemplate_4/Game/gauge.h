@@ -9,8 +9,14 @@ public:
 	void Update();
 	void PostDraw();
 
-	void HP_meter(float hp, float hpMAX);
-	void Energy_meter(float energy, float energyMAX);
+	void HP_meter(float hp, float hpMAX)
+	{
+		e_hp = hp / hpMAX;
+	}
+	void Energy_meter(float energy, float energyMAX)
+	{
+		e_gauge = energy / energyMAX;
+	}
 private:
 	Sprite m_HP_frame;
 	Sprite m_HP_meter;
