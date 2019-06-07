@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "title.h"
 #include "GameBase/GameBase.h"
+#include "graphics/EffekseerManager.h"
 
 using namespace YTEngine;
 title::title()
@@ -14,6 +15,8 @@ title::~title()
 
 bool title::Start()
 {
+	//エフェクト関係の初期化。
+	G_EffekseerManager().Init();
 	m_position01.y = 100.0f;
 	m_position02.y = (-100.0f);
 	
@@ -40,7 +43,8 @@ void title::Update()
 		m_position01.y += 5.0f;
 		m_position02.y -= 5.0f;
 		if (m_position01.y>=450.0f) {
-			FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_mainGame);
+			FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_stageselect);
+			//DeleteGO(this);
 		}
 	}
 	

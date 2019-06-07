@@ -87,18 +87,19 @@ namespace YTEngine {
 	//ディレクションライトの初期化。
 	void SkinModel::InitDirectionLight()
 	{
+		float right = 0.6f;
 		m_light.directionLight.direction[0] = { 1.0f, 0.0f, 0.0f, 0.0f };
-		m_light.directionLight.color[0] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_light.directionLight.color[0] = { right, right, right, 1.0f };
 
 		m_light.directionLight.direction[1] = { -1.0f, 0.0f, 0.0f, 0.0f };
-		m_light.directionLight.color[1] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_light.directionLight.color[1] = { right, right, right, 1.0f };
 
 		m_light.directionLight.direction[2] = { 0.0f, 0.0f, 1.0f, 0.0f };
-		m_light.directionLight.color[2] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_light.directionLight.color[2] = { right, right, right, 1.0f };
 
 		//地面の色に反映される。
 		m_light.directionLight.direction[3] = { 0.0f, 0.0f, -1.0f, 0.0f };
-		m_light.directionLight.color[3] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		m_light.directionLight.color[3] = { right, right, right, 1.0f };
 
 		m_light.specPow = 100.0f;
 	}

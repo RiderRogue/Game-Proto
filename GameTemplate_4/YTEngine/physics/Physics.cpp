@@ -58,6 +58,7 @@ namespace YTEngine {
 	}
 	void CPhysicsWorld::RemoveRigidBody(RigidBody& rb)
 	{
+
 		dynamicWorld->removeRigidBody(rb.GetBody());
 	}
 }

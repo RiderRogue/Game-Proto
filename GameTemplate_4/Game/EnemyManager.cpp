@@ -30,7 +30,8 @@ void EnemyManager::Update()
 		//¶‚«‚Ä‚¢‚é“z‚Ì‚İ“–‚½‚è”»’è‚ğ‚Æ‚éB
 		if (enemy_slot[i].Aliveflag == true) {
 			G_Player_BulletManager().EnemyHit(enemy_slot[i].enemy);
-			
+			G_Player_BulletManager().EnemyHitMine(enemy_slot[i].enemy);
+			G_Player_BulletManager().EnemyHitBlackhole(enemy_slot[i].enemy);
 		}
 	}
 	G_EnemyBulletManager().Update();

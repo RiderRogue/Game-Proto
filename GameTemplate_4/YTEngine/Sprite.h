@@ -51,6 +51,7 @@ namespace YTEngine {
 		/// •`‰æ
 		/// </summary>
 		void Draw();
+		void Draw(int i);
 		/// <summary>
 		/// ƒ¿‚ð•ÏˆÊ‚³‚¹‚é
 		/// </summary>

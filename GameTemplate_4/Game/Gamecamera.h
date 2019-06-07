@@ -78,15 +78,25 @@ private:
 	float rStick_y;                                     //右スティックの縦の入力量。
 	float lStick_x;                                     //左スティックの横の入力量。
 	float lStick_y;                                     //左スティックの縦の入力量。
+	float Cameraplus = 0.0f;
+	float Targetplus = 0.0f;
+	float Targetpos_y = 0.0f;
+	float rotation_speed;                               //カメラの回転スピード。
+	float Player_height;                                //プレイヤーの高さ。
+	float Camera_Stick = 0.0f;
+	float Camera_Stick_MAX=0.0f;
+	bool boostflag = false;                             //ブースト時のフラグ。
 	CVector3 Player_position = CVector3::Zero();        //プレイヤーの座標を格納する。
 	CVector3 Camera_vector = CVector3::Zero();          //カメラの座標を代入。
-	Player* player;                                     //プレイヤーの座標を取得するために使う。
-	CMatrix mRot;                                       //カメラの回転行列。
 	CVector3 m_forward = CVector3::Zero();				//カメラの前方。
 	CVector3 m_rite = CVector3::Zero();                 //カメラの右方向。
 	CVector3 Player_Cameravector = CVector3::Zero();    //プレイヤーからカメラへの単位ベクトル(方向ベクトル)。
+	CVector3 Targetposition=CVector3::Zero();           //注視点。
+	CVector3 Camera_position = CVector3::Zero();        //ゲームカメラの座標。
+
+	Player* player;                                     //プレイヤーの座標を取得するために使う。
+	CMatrix mRot;                                       //カメラの回転行列。
 	CQuaternion m_rotation = CQuaternion::Identity();   //カメラの任意軸回転。
 	CQuaternion qBias = CQuaternion::Identity();
-	float rotation_speed;                               //カメラの回転スピード。
-	bool boostflag = false;                             //ブースト時のフラグ。
+	
 };

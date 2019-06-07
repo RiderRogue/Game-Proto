@@ -142,6 +142,10 @@ namespace YTEngine {
 			isGBuffer = gBuffer;
 		}
 
+		void SetIsspecPow(float set_specPow)
+		{
+			m_light.specPow = set_specPow;
+		}
 		/// <summary>
 		/// シャドウレシーバーのフラグを設定する。
 		/// </summary>

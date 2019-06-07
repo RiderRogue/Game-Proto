@@ -19,6 +19,7 @@ bool Enemy::Start()
 	BulletRange = 4000.0f;
 	//cmoファイルの読み込み。
 	m_model.Init(L"Assets/modelData/unityChan.cmo");
+	t_model.Init(L"Assets/modelData/TargetSight01.cmo");
 	mRot.MakeRotationFromQuaternion(m_rotation);
 	m_forward.x = mRot.m[2][0];
 	m_forward.y = mRot.m[2][1];
@@ -62,6 +63,9 @@ void Enemy::Update()
 	m_rite.Normalize();
 
 	m_moveSpeed = m_rite * (-100.0f);
+	m_moveSpeed.y -= 400.0f;//重力。
+	m_moveSpeed += m_premoveSpeed;
+	m_premoveSpeed = CVector3::Zero();
 	//m_moveSpeed += {1.0f,0.0f,0.0f};
 	m_position = m_charaCon.EnemyExecute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
 	//ダメージ処理。
@@ -85,8 +89,13 @@ void Enemy::Update()
 		count = 0;
 	}
 
+	qBias.SetRotationDeg(CVector3::AxisY(),15.0f);
+	t_rotation.Multiply(qBias);
+	qBias.SetRotationDeg(CVector3::AxisZ(), 15.0f);
+	t_rotation.Multiply(qBias);
 	//ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
+	t_model.UpdateWorldMatrix(m_position_center, t_rotation, CVector3::One());
 }
 void Enemy::Draw()
 {
@@ -95,6 +104,7 @@ void Enemy::Draw()
 		g_camera3D.GetViewMatrix(),
 		g_camera3D.GetProjectionMatrix()
 	);
+	
 }
 void Enemy::EnemyShot()
 {
@@ -134,8 +144,26 @@ void Enemy::enemyDamage(int damage)
 
 	if (enemy_HP <= 0) {
 		enemy_deathflag = true;
-		//G_EnemyManager()
 	}
+}
+
+void Enemy::enemyDamage_Blackhole(int damage, CVector3 b_position)
+{
+	//ブラックホールの吸収範囲かを調べる。
+	CVector3 vDist;
+	vDist.Subtract(b_position, m_position_center);
+	//ブラックホールの中心に来たら
+	if (vDist.Length() <= 60.0f) {
+		//受けたダメージ分、HPから引く。
+		enemy_HP -= damage;
+		if (enemy_HP <= 0) {
+			enemy_deathflag = true;
+		}
+	}
+
+	vDist.Normalize();//正規化。
+	m_premoveSpeed = vDist * (800.0f);
+
 }
 
 float Enemy::VectorAngleDeg(CVector3 c)
@@ -152,4 +180,13 @@ void Enemy::SetShadowCasters()
 {
 	//シャドウキャスターを登録。
 	Shadow_map().RegistShadowCaster(&m_model);
+}
+
+void Enemy::PostDraw()
+{
+	t_model.Draw(
+		enRenderMode_Normal,
+		g_camera3D.GetViewMatrix(),
+		g_camera3D.GetProjectionMatrix()
+	);
 }

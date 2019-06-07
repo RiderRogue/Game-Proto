@@ -169,6 +169,7 @@
     <ClInclude Include="sound\SoundEngine.h" />
     <ClInclude Include="sound\SoundSource.h" />
     <ClInclude Include="character\EnemyController.h" />
+    <ClInclude Include="graphics\EffekseerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -281,5 +282,6 @@
     <ClCompile Include="sound\SoundEngine.cpp" />
     <ClCompile Include="sound\SoundSource.cpp" />
     <ClCompile Include="character\EnemyController.cpp" />
+    <ClCompile Include="graphics\EffekseerManager.cpp" />
   </ItemGroup>
 </Project>

@@ -32,6 +32,7 @@ void Player::OnDestroy()
 
 bool Player::Start()
 {
+	player_desflag = false;
 	HP = HP_MAX;
 	Energy = Energy_MAX;
 
@@ -168,9 +169,9 @@ void Player::Update()
 
 	targetSight.Update(m_targetSight_position, CQuaternion::Identity(), { 0.5f,0.5f,1.0f });
 
-	if (player_desflag == true) {
+	/*if (player_desflag == true) {
 		FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
-	}
+	}*/
 	//if (g_pad[0].IsTrigger(enButtonA)) {
 	//	//Aボタンが押されたらSEを鳴らす。
 	//	static int m_playSENo = 0;
@@ -244,28 +245,56 @@ void Player::Bullet_Missile_Controller()
 	//ミサイル発射ボタンが押されていたらtrueにする。
 	static bool M_Lockonflag = false;
 
+	/*Bulletangle += g_pad[0].GetRStickYF()*0.18f;
+	if (Bulletangle >= 1.0f) {
+		Bulletangle = 1.0f;
+	}
+	if (Bulletangle <= -1.0f) {
+		Bulletangle = -1.0f;
+	}
+
+
 	CQuaternion qBullet = CQuaternion::Identity();
-	if (g_pad[0].GetRStickYF()>=0.0f) {
-		qBullet.SetRotationDeg(m_rite, -(g_pad[0].GetRStickYF()*30.0f));
+	if (Bulletangle >= 0.0f) {
+		qBullet.SetRotationDeg(m_rite, -(Bulletangle*30.0f));
 	}
 	else {
-		qBullet.SetRotationDeg(m_rite, -(g_pad[0].GetRStickYF()*20.0f));
+		qBullet.SetRotationDeg(m_rite, -(Bulletangle*26.0f));
 	}
+	qBullet.Multiply(Bullet_vector);*/
+
+	float kaku = acosf(Camera_vector.Dot(m_forward));//２つのべクトルの内積のアークコサインを求める。(ラジアン)
+	float degree = CMath::RadToDeg(kaku);
+	CQuaternion qBullet = CQuaternion::Identity();
+
+	if (Cameraplus > 0.0f) {
+		qBullet.SetRotationDeg(m_rite, (degree));
+	}
+	else {
+		qBullet.SetRotationDeg(m_rite, -(degree));
+	}
+	
 	qBullet.Multiply(Bullet_vector);
 
 	//射撃ボタンが押されているか判定。
 	if (g_pad[0].IsPress(enButtonRB2))
 	{
 		//射撃処理。
-		G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
-		//bulletManager->Shot(m_position, m_forward);
-
-		//プレイヤーを正面に向かせるために、回転を固定する。
-		//player_rotationFlag = false;
+		//G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
+		G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
 	}
-	else {
-		//回転の固定を解除。
-		//player_rotationFlag = true;
+	//マインボタンが押されているか判定。
+	if (g_pad[0].IsTrigger(enButtonX)) {
+		G_Player_BulletManager().mineShot(m_position);
+	}
+
+	static int expl = 0;
+	if (g_pad[0].IsPress(enButtonX)) {
+		expl++;
+	}
+	if (expl > 30) {
+		G_Player_BulletManager().mineexplosion();
+		expl = 0;
 	}
 	G_Player_BulletManager().Update();
 

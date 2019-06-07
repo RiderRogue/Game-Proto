@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameObjectManager.h"
+#include "graphics/EffekseerManager.h"
 
 
 namespace YTEngine {
@@ -75,12 +76,18 @@ namespace YTEngine {
 		);
 		d3dDeviceContext->RSSetViewports(numViewport, &m_frameBufferViewports);*/
 		
+
+		
+
 		//IGameObjectの描画
 		for (GameObjectList objList : m_gameObjectListArray) {
 			for (IGameObject* obj : objList) {
 				obj->DrawWrapper();
 			}
 		}
+
+		//エフェクトを描画。
+		G_EffekseerManager().Draw();
 
 		for (GameObjectList objList : m_gameObjectListArray) {
 			for (IGameObject* obj : objList) {
@@ -110,6 +117,8 @@ namespace YTEngine {
 				obj->PostDrawWrapper();
 			}
 		}
+
+		
 		//シーングラフを更新。
 		UpdateSceneGraph();
 

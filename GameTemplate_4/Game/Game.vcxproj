@@ -111,6 +111,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Player_BulletManager.cpp" />
     <ClCompile Include="Player_MissileManager.cpp" />
+    <ClCompile Include="Stageselect.cpp" />
+    <ClCompile Include="Stage_00.cpp" />
+    <ClCompile Include="Stage_01.cpp" />
+    <ClCompile Include="Stage_Base.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -130,6 +134,10 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Player_BulletManager.h" />
     <ClInclude Include="Player_MissileManager.h" />
+    <ClInclude Include="Stageselect.h" />
+    <ClInclude Include="Stage_00.h" />
+    <ClInclude Include="Stage_01.h" />
+    <ClInclude Include="Stage_Base.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="WalkEnemy.h" />
@@ -141,12 +149,18 @@
     <MeshContentTask Include="Assets\modelData\books1.fbx" />
     <MeshContentTask Include="Assets\modelData\bullet.FBX" />
     <MeshContentTask Include="Assets\modelData\EnemyBullet.FBX" />
+    <MeshContentTask Include="Assets\modelData\FlyEnemy.FBX" />
+    <MeshContentTask Include="Assets\modelData\Heliport.FBX" />
+    <MeshContentTask Include="Assets\modelData\Heliport_bill.FBX" />
+    <MeshContentTask Include="Assets\modelData\hole.FBX" />
     <MeshContentTask Include="Assets\modelData\konkuri.rando.fbx" />
     <MeshContentTask Include="Assets\modelData\level_proto.fbx" />
+    <MeshContentTask Include="Assets\modelData\Mine.FBX" />
     <MeshContentTask Include="Assets\modelData\Player_Robo.FBX" />
     <MeshContentTask Include="Assets\modelData\Plaza.FBX" />
     <MeshContentTask Include="Assets\modelData\road.FBX" />
     <MeshContentTask Include="Assets\modelData\road_curve90.FBX" />
+    <MeshContentTask Include="Assets\modelData\road_rong.FBX" />
     <MeshContentTask Include="Assets\modelData\road_short.FBX" />
     <MeshContentTask Include="Assets\modelData\road_slope01.FBX" />
     <MeshContentTask Include="Assets\modelData\road_slope02.FBX" />
@@ -154,7 +168,12 @@
     <MeshContentTask Include="Assets\modelData\road_zyuzi.FBX" />
     <MeshContentTask Include="Assets\modelData\sora.FBX" />
     <MeshContentTask Include="Assets\modelData\sora_2.fbx" />
+    <MeshContentTask Include="Assets\modelData\stage_01.fbx" />
+    <MeshContentTask Include="Assets\modelData\stage_02.fbx" />
     <MeshContentTask Include="Assets\modelData\stage_base01.FBX" />
+    <MeshContentTask Include="Assets\modelData\stage_base01_short.FBX" />
+    <MeshContentTask Include="Assets\modelData\stage_base_sand.FBX" />
+    <MeshContentTask Include="Assets\modelData\TargetSight01.FBX" />
     <MeshContentTask Include="Assets\modelData\unityChan.fbx">
       <ContentOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\Assets\modelData\%(Filename).cmo</ContentOutput>
       <ContentOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\Assets\modelData\%(Filename).cmo</ContentOutput>
@@ -165,6 +184,7 @@
     <None Include="Assets\level\level01.tkl" />
     <None Include="Assets\level\level01_proto.tkl" />
     <None Include="Assets\level\level01_proto02.tkl" />
+    <None Include="Assets\level\stage_00.tkl" />
     <None Include="Assets\level\stage_01.tkl" />
     <None Include="Assets\level\stage_02.tkl" />
     <None Include="Assets\level\stage_03.tkl" />
@@ -216,6 +236,12 @@
   <ItemGroup>
     <ImageContentTask Include="Assets\sprite\Title01.png" />
     <ImageContentTask Include="Assets\sprite\Title02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\sprite\backgrounds_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\sprite\stage_select.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

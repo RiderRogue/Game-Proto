@@ -14,6 +14,7 @@ Gamecamera::~Gamecamera()
 bool Gamecamera::Start()
 {
 	mRot.MakeRotationFromQuaternion(m_rotation);
+	
 	//前方
 	m_forward.x = mRot.m[2][0];
 	m_forward.y = mRot.m[2][1];
@@ -27,13 +28,19 @@ bool Gamecamera::Start()
 	m_rite.Normalize();
 
 	player = FindGO<Player>("Player");
+	Player_height = player->Getheight();
 	//プレイヤーの前向きベクトルから後ろ向きベクトルを取得する。
 	Player_Cameravector = SetPlayer_Cameravector();
 	Camera_vector = Player_Cameravector * Camera_Length;//後ろ向きに300ほど下がった座標に設定する。
-	Camera_vector.y = 120.0f;
-	//Camera_vector.x += 120.0f;
-	g_camera3D.SetTarget(player->Getposition());
-	g_camera3D.SetPosition(Camera_vector);
+	Camera_position.y += Player_height;
+
+	//g_camera3D.SetTarget(player->Getposition());
+	//g_camera3D.SetPosition(Camera_vector);
+	Targetposition = player->Getposition();
+	Targetposition.y += Player_height;
+	Camera_position = Camera_vector;
+	g_camera3D.SetTarget(Targetposition);
+	g_camera3D.SetPosition(Camera_position);
 	g_camera3D.Update();
 	
 
@@ -58,8 +65,9 @@ void Gamecamera::Update()
 	player->Setcamera_rot_speed(rotation_speed);
 
 	//ゲームカメラの注視点(ターゲット)を設定する。
-	CVector3 Targetposition = player->Getposition();
-	Targetposition.y += 100.0f;
+	Targetposition = player->Getposition();
+	Targetposition.y += Player_height;
+	Targetpos_y = Targetposition.y;
 	//Targetposition.x -= 120.0f;
 	//Rスティックの入力量を受け取る。
 	rStick_x = g_pad[0].GetRStickXF();
@@ -110,8 +118,8 @@ void Gamecamera::Update()
 	
 	
 
-	CVector3 Camera_position = player->Getposition() + Camera_vector;
-	Camera_position.y += player->Getheight()+10.0f;
+    Camera_position = player->Getposition() + Camera_vector;
+	Camera_position.y += Player_height;
 	//プレイヤーにゲームカメラの前方向と右方向の単位ベクトルを送る。
 	player->SetCamera_forward(m_forward);
 	player->SetCamera_rite(m_rite);
@@ -137,7 +145,7 @@ void Gamecamera::Update()
 		Targetposition -= m_rite * lStick_x*(-50.0f);
 	}*/
 	}
-	else {		
+	else {
 		//2つの値の横の移動量は一緒。
 		//ブースト時にはカメラの速度を上げる。
 		if (boostflag == true) {
@@ -165,26 +173,95 @@ void Gamecamera::Update()
 			}
 		}
 
-			Camera_position += m_rite * lStick_x *(cameraspeed);
-			Targetposition += m_rite * lStick_x*(cameraspeed);
-			Post_Camera_position = Camera_position;
-			Post_Targetposition = Targetposition;
-		
+	
+
+		if (lStick_x!=0.0f) {
+			Camera_Stick = lStick_x;
+		}
+		else {//lStick_xが0.0fのとき
+			if (Camera_Stick < 0.0f) {
+				Camera_Stick += 0.001f;
+				if (Camera_Stick >= 0.0f) {
+					Camera_Stick = 0.0f;
+				}
+			}
+			else {
+				Camera_Stick -= 0.001f;
+				if (Camera_Stick <= 0.0f) {
+					Camera_Stick = 0.0f;
+				}
+
+			}
+		}
+		Camera_position += m_rite * Camera_Stick *(cameraspeed);
+		Targetposition += m_rite * Camera_Stick*(cameraspeed);
+		Post_Camera_position = Camera_position;
+		Post_Targetposition = Targetposition;
+
 	}
 
 	//カメラの上下操作。
-	if (rStick_y<0.0f) {
+	//前フレームの入力量を反映させる。
+	Camera_position.y += Cameraplus;//下向き
+	Targetposition.y += Targetplus;//上向き
+
+	CVector3 Target_y, Camera_y;
+	Target_y = CVector3::Zero();
+	Camera_y = CVector3::Zero();
+	Target_y.y = Targetposition.y;
+	Camera_y.y = Camera_position.y;
+	CVector3 Syakaku;
+	Syakaku.Subtract(Targetposition,Camera_position);//減算。
+	Syakaku.Normalize();
+	player->GetCamera_vector(Syakaku, Cameraplus);
+	//平行なとき
+	if((Cameraplus == 0.0f)&&(Targetplus == 0.0f))
+	{
+		if (rStick_y < 0.0f) {
+			//下向き入力のとき
+			Cameraplus+= rStick_y * (-20.0f);
+		}
+		else if(rStick_y > 0.0f) {
+			//上向き入力のとき
+			Targetplus += rStick_y * (20.0f);
+		}
+	}
+	else if (Cameraplus > 0.0f) {
+		//下向き時
+		Cameraplus += rStick_y * (-20.0f);
+		if (Cameraplus <= 0.0f) {
+			Cameraplus = 0.0f;
+		}
+		if (Cameraplus >= 120.0f) {
+			Cameraplus = 120.0f;
+		}
+	}
+	else if (Targetplus > 0.0f) {
+		//上向き時
+		Targetplus += rStick_y * (20.0f);
+		if (Targetplus <= 0.0f) {
+			Targetplus = 0.0f;
+		}
+		if (Targetplus >= 120.0f) {
+			Targetplus = 120.0f;
+		}
+	}
+	//if (rStick_y > 0.0f) {
+	//	//入力量を記録。
+	//	Cameraplus = rStick_y;
+	//}
+	/*if (rStick_y<0.0f) {
 		Camera_position.y += rStick_y * (-100.0f);
 	}
 	else {
 		Targetposition.y += rStick_y * (100.0f);
-	}
+	}*/
 	
 	//射角の設定。
 	CVector3 backvector = m_forward*(-1);
 	CVector3 camera_bulletangle = Camera_position - Targetposition;
 	camera_bulletangle.Normalize();
-	player->Setbullet_angle(backvector.Dot(camera_bulletangle));
+	
 	/*if (g_pad[0].IsPress(enButtonRB2)) {
 		Camera_position += m_rite * lStick_x*(100.0f);
 		Targetposition += m_rite * lStick_x*(100.0f);

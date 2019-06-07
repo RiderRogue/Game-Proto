@@ -129,13 +129,10 @@ public:
 		camera_rot_speed = angle;
 	}
 	/*!
-	*@brief 射角を設定する。
+	*@brief ゲームカメラの座標とターゲットの座標を設定する。
 	*@param[in] angle   ゲームカメラの前方の単位ベクトル。
 	*/
-	void Setbullet_angle(float angle)
-	{
-		bullet_angle = angle;
-	}
+
 	/*!
 	*@brief	プレイヤーの攻撃入力を扱う。
 	*/
@@ -152,6 +149,13 @@ public:
 	{
 		return player_height;
 	}
+
+	//正規化されたカメラの単位ベクトルを格納する。
+	void GetCamera_vector(CVector3 angle,float c_plus) {
+		Camera_vector = angle;
+		Cameraplus = c_plus;
+	}
+	
 	/*
 	*@brief プレイヤーの移動時の処理。
 	*/
@@ -174,6 +178,19 @@ public:
 		}
 	}
 
+	/*
+	*@brief プレイヤーの座標を初期化。
+	*/
+	void Setposition(CVector3 pos) {
+		m_position = pos;
+	}
+	/*
+	*@brief プレイヤーの死亡フラグを所得。
+	*/
+	bool GetPlayer_desflag() {
+		return player_desflag;
+	}
+
 private:
 	
 
@@ -181,12 +198,13 @@ private:
 	CVector3 m_moveSpeed = CVector3::Zero();            //プレイヤーの移動速度。
 	CVector3 m_forward = CVector3::Zero();				//プレイヤーの前方。
 	CVector3 m_rite = CVector3::Zero();                 //プレイヤーの右側。
-	CVector3 m_position = CVector3::Zero();             //プレイヤーの座標。
+	CVector3 m_position = { 0.0f,0.0f,200.0f };           //プレイヤーの座標。
 	CVector3 m_position_center;                         //当たり判定などで扱う中心座標。
 	CVector3 camera_forward = CVector3::Zero();			//ゲームカメラの前方。
 	CVector3 camera_rite = CVector3::Zero();            //ゲームカメラの右方向。
+	CVector3 Camera_vector = CVector3::Zero();            //カメラの方向。
 	CVector3 Bullet_vector = CVector3::Zero();            //射撃方向。
-	CVector3 m_targetSight_position = { 0.0f,140.0f,0.0f };//ターゲットサイト。
+	CVector3 m_targetSight_position = { 0.0f,-30.0f,0.0f };//ターゲットサイト。
 	SkinModel m_model;									//スキンモデル。
 	CharacterController m_charaCon;                     //プレイヤーの剛体。
 	CQuaternion m_rotation = CQuaternion::Identity();   //キャラの回転
@@ -200,16 +218,17 @@ private:
 	CSoundSource m_movese;
 	CSoundSource m_Jumpse;
 
+	float Cameraplus = 0.0f;
 	float m_moveSpeed_side = 0.0f;          //プレイヤーの横方向の移動速度。
 	float lStick_x;                         //左スティックの横の入力量。
 	float lStick_y;                         //左スティックの縦の入力量。
 	float player_height = 150.0f;		    //プレイヤーの高さ。
 	float camera_rot_angle = 0.0f;          //ゲームカメラが回る方向を示す(-1～1の範囲)。
 	float camera_rot_speed = 0.0f;          //ゲームカメラの回転スピード。
-	float bullet_angle = 0.0f;              //射角。
 	float boostTime = 0.0f;                 //加速している時間。
 	float HP;
 	float Energy;
+	float Bulletangle = 0.0f;               //射角。
 	const float HP_MAX = 1000.0f;
 	const float Energy_MAX = 1000.0f;
 	bool EnergyOutFlag = false;             //エナジー切れを検知。
@@ -217,5 +236,6 @@ private:
 	bool JumpFlag = false;        
 	bool player_rotationFlag = true;        //プレイヤーが回転するかを判定するフラグ。trueで回転。	  
 	bool player_desflag = false;
+
 };
 
