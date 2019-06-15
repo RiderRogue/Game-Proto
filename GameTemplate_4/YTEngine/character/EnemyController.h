@@ -27,9 +27,16 @@ namespace YTEngine {
 		}
 
 		/*!
-		* @brief	剛体を物理エンジンから削除。。
+		* @brief	剛体を物理エンジンから削除。
 		*/
 		void RemoveRigidBoby();
+
+		/*!
+		* @brief	30フレーム先の壁とぶつからないようにする。
+		*@param[in]	moveSpeed		移動量。
+		*@param[out]	moveVector		新たな移動方向。
+		*/
+		CVector3 ReflectWall(CVector3 moveSpeed);
 	private:
 		SphereCollider		m_bullet_collider;					//コライダー。
 		RigidBody			m_bullet_rigidBody;					//剛体。

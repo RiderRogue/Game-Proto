@@ -7,7 +7,8 @@
 #include "graphics/EffekseerManager.h"
 #include "Stage_00.h"
 #include "Stage_01.h"
-
+#include "Stage_02.h"
+#include "Stage_03.h"
 
 MainGame::MainGame()
 {
@@ -43,7 +44,10 @@ bool MainGame::Start()
 		NewGO<Stage_01>(1, "Stage_01");
 		break;
 	case 2:
-		FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
+		NewGO<Stage_02>(1, "Stage_02");
+		break;
+	case 3:
+		NewGO<Stage_03>(1, "Stage_03");
 		break;
 	default:
 		FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
@@ -102,6 +106,11 @@ void MainGame::Update()
 			FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
 			break;
 		case 2:
+			DeleteGO(FindGO<Stage_02>("Stage_02"));
+			FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
+			break;
+		case 3:
+			DeleteGO(FindGO<Stage_03>("Stage_03"));
 			FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
 			break;
 		default:

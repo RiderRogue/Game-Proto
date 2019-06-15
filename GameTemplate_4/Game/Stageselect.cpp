@@ -23,6 +23,7 @@ bool Stageselect::Start()
 	stage00.Init(L"Assets/modelData/stage_01.cmo");
 	stage01.Init(L"Assets/modelData/stage_02.cmo");
 	stage02.Init(L"Assets/modelData/Player_Robo.cmo");
+	stage03.Init(L"Assets/modelData/stage_03.cmo");
 
 	for (int i = 0; i <StageNUM_MAX;i++) {
 		stage_pos[i].x = i * -stage_while;
@@ -125,6 +126,7 @@ void Stageselect::Update()
 	stage00.UpdateWorldMatrix(stage_pos[0], stage_rot[0], stage_sc[0]);
 	stage01.UpdateWorldMatrix(stage_pos[1], stage_rot[1], stage_sc[1]);
 	stage02.UpdateWorldMatrix(stage_pos[2], stage_rot[2], CVector3::One());
+	stage03.UpdateWorldMatrix(stage_pos[3], stage_rot[3], stage_sc[3]);
 
 	g_camera3D.Update();
 	if ((R_scrollflag == false)&&(L_scrollflag == false)) {
@@ -154,6 +156,11 @@ void Stageselect::Draw()
 		g_camera3D.GetProjectionMatrix()
 	);
 	stage02.Draw(
+		enRenderMode_Normal,
+		g_camera3D.GetViewMatrix(),
+		g_camera3D.GetProjectionMatrix()
+	);
+	stage03.Draw(
 		enRenderMode_Normal,
 		g_camera3D.GetViewMatrix(),
 		g_camera3D.GetProjectionMatrix()

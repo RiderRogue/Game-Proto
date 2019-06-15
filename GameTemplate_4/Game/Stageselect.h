@@ -15,6 +15,7 @@ private:
 	SkinModel stage00;
 	SkinModel stage01;
 	SkinModel stage02;
+	SkinModel stage03;
 
 	bool L_scrollflag = false;
 	bool R_scrollflag = false;
@@ -25,7 +26,7 @@ private:
 	int rcount = 0;
 	int lcount = 0;
 	int stagenum = 0;
-	static const int StageNUM_MAX = 3;//ステージの合計数。
+	static const int StageNUM_MAX = 4;//ステージの合計数。
 	CVector3 stage_pos[StageNUM_MAX];
 	CQuaternion stage_rot[StageNUM_MAX];   //キャラの回転
 	CVector3  stage_sc[StageNUM_MAX]; //キャラの拡大率。

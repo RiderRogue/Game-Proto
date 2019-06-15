@@ -62,11 +62,13 @@ void Enemy::Update()
 	m_rite.z = mRot.m[0][2];
 	m_rite.Normalize();
 
-	m_moveSpeed = m_rite * (-100.0f);
-	m_moveSpeed.y -= 400.0f;//重力。
-	m_moveSpeed += m_premoveSpeed;
+	m_moveSpeed = CVector3::AxisX() * (200.0f);
+	
+	//m_moveSpeed += m_premoveSpeed;
 	m_premoveSpeed = CVector3::Zero();
-	//m_moveSpeed += {1.0f,0.0f,0.0f};
+	
+	m_moveSpeed = m_charaCon.ReflectWall(m_moveSpeed);
+	//m_moveSpeed.y -= 400.0f;//重力。
 	m_position = m_charaCon.EnemyExecute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
 	//ダメージ処理。
 	m_position_center = m_charaCon.Getbullet_position();

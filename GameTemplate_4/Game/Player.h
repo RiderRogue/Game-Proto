@@ -3,7 +3,7 @@
 * @brief	プレイヤー。
 */
 #include "character/CharacterController.h"
-
+#include "Physics/CollisionAttr.h"
 #include "sound/SoundEngine.h"
 #include "sound/SoundSource.h"
 class gauge;
@@ -183,6 +183,13 @@ public:
 	*/
 	void Setposition(CVector3 pos) {
 		m_position = pos;
+		//現在はカプセル
+		m_charaCon.Init(
+			30.0f,
+			player_height,
+			m_position
+		);
+		m_charaCon.GetRigidBody()->GetBody()->setUserIndex(enCollisionAttr_Player);
 	}
 	/*
 	*@brief プレイヤーの死亡フラグを所得。

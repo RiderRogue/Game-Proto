@@ -100,6 +100,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBoss_Launcher.cpp" />
     <ClCompile Include="EnemyBulletManager.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="GameBase\GameBase.cpp" />
@@ -114,6 +115,8 @@
     <ClCompile Include="Stageselect.cpp" />
     <ClCompile Include="Stage_00.cpp" />
     <ClCompile Include="Stage_01.cpp" />
+    <ClCompile Include="Stage_02.cpp" />
+    <ClCompile Include="Stage_03.cpp" />
     <ClCompile Include="Stage_Base.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -124,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBoss_Launcher.h" />
     <ClInclude Include="EnemyBulletManager.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="GameBase\GameBase.h" />
@@ -137,6 +141,8 @@
     <ClInclude Include="Stageselect.h" />
     <ClInclude Include="Stage_00.h" />
     <ClInclude Include="Stage_01.h" />
+    <ClInclude Include="Stage_02.h" />
+    <ClInclude Include="Stage_03.h" />
     <ClInclude Include="Stage_Base.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="title.h" />
@@ -148,7 +154,9 @@
     <MeshContentTask Include="Assets\modelData\books.fbx" />
     <MeshContentTask Include="Assets\modelData\books1.fbx" />
     <MeshContentTask Include="Assets\modelData\bullet.FBX" />
+    <MeshContentTask Include="Assets\modelData\EnemyBoss.FBX" />
     <MeshContentTask Include="Assets\modelData\EnemyBullet.FBX" />
+    <MeshContentTask Include="Assets\modelData\EnemyMissile.FBX" />
     <MeshContentTask Include="Assets\modelData\FlyEnemy.FBX" />
     <MeshContentTask Include="Assets\modelData\Heliport.FBX" />
     <MeshContentTask Include="Assets\modelData\Heliport_bill.FBX" />
@@ -170,6 +178,7 @@
     <MeshContentTask Include="Assets\modelData\sora_2.fbx" />
     <MeshContentTask Include="Assets\modelData\stage_01.fbx" />
     <MeshContentTask Include="Assets\modelData\stage_02.fbx" />
+    <MeshContentTask Include="Assets\modelData\stage_03.fbx" />
     <MeshContentTask Include="Assets\modelData\stage_base01.FBX" />
     <MeshContentTask Include="Assets\modelData\stage_base01_short.FBX" />
     <MeshContentTask Include="Assets\modelData\stage_base_sand.FBX" />

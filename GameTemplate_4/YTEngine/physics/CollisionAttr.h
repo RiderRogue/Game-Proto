@@ -13,5 +13,6 @@ enum EnCollisionAttr {
 	enCollisionAttr_Stage,
 	enCollisionAttr_Player,
 	enCollisionAttr_Enemy,
-	enCollisionAttr_EnemyBullet
+	enCollisionAttr_EnemyBullet,
+	enCollisionAttr_EnemyMissile
 };

@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "gauge.h"
 
-#include "Physics/CollisionAttr.h"
+
 #include "Player_BulletManager.h"
 #include "Player_MissileManager.h"
 #include "GameBase/GameBase.h"
@@ -48,14 +48,9 @@ bool Player::Start()
 	m_rite.y = mRot.m[0][1];
 	m_rite.z = mRot.m[0][2];
 	m_rite.Normalize();
-	//現在はカプセル
-	m_charaCon.Init(
-		30.0f,
-		player_height,
-		m_position
-	);
 
-	m_charaCon.GetRigidBody()->GetBody()->setUserIndex(enCollisionAttr_Player);
+
+	
 	G_Player_BulletManager().Start();
 	//bulletManager = NewGO<Player_BulletManager>(1, "Player_BulletManager");
 
@@ -280,8 +275,8 @@ void Player::Bullet_Missile_Controller()
 	if (g_pad[0].IsPress(enButtonRB2))
 	{
 		//射撃処理。
-		//G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
-		G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
+		G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
+		//G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
 	}
 	//マインボタンが押されているか判定。
 	if (g_pad[0].IsTrigger(enButtonX)) {
