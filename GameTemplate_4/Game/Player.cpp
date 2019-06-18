@@ -275,15 +275,18 @@ void Player::Bullet_Missile_Controller()
 	if (g_pad[0].IsPress(enButtonRB2))
 	{
 		//射撃処理。
-		G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
-		//G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
+		//G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
+		G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
 	}
+
+	static int expl = 0;//長押しで全て起爆。
 	//マインボタンが押されているか判定。
 	if (g_pad[0].IsTrigger(enButtonX)) {
 		G_Player_BulletManager().mineShot(m_position);
+		expl = 0;//長押しの初期化。
 	}
 
-	static int expl = 0;
+	
 	if (g_pad[0].IsPress(enButtonX)) {
 		expl++;
 	}

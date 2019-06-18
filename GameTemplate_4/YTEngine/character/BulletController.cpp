@@ -16,6 +16,14 @@ namespace YTEngine {
 					&& convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Player) {
 					E_bulletisHit = true;
 				}
+				if (me->getUserIndex() == enCollisionAttr_EnemyBullet
+					&& convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_PlayerBullet) {
+					isHit = true;
+				}
+				if (me->getUserIndex() == enCollisionAttr_PlayerBullet
+					&& convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_EnemyBullet) {
+					isHit = true;
+				}
 				if (convexResult.m_hitCollisionObject == me
 					|| convexResult.m_hitCollisionObject->getUserIndex()== enCollisionAttr_Player
 					|| convexResult.m_hitCollisionObject->getUserIndex() == enCollisionAttr_Enemy

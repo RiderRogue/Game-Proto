@@ -64,7 +64,7 @@ void Enemy::Update()
 
 	m_moveSpeed = CVector3::AxisX() * (200.0f);
 	
-	//m_moveSpeed += m_premoveSpeed;
+	m_moveSpeed += m_premoveSpeed;
 	m_premoveSpeed = CVector3::Zero();
 	
 	m_moveSpeed = m_charaCon.ReflectWall(m_moveSpeed);

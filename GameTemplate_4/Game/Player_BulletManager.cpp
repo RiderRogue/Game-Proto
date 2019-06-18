@@ -3,40 +3,205 @@
 #include "graphics/EffekseerManager.h"
 
 
-
-
-Player_BulletManager::Player_BulletManager()
+void Player_BulletState::Init(CVector3 p_position, CVector3 p_forward)
 {
+	desflag = false;
+	m_position = p_position;
+	m_forward = p_forward;
+	m_position += p_forward * 90.0f;
+	m_position.y += 90.0f;
+	m_bulletCon.Init(
+		10.0f,
+		m_position
+	);
+	m_bulletCon.GetRigidBody()->GetBody()->setUserIndex(enCollisionAttr_PlayerBullet);
+	lengthcount = 0;
+	m_model.Init(L"Assets/modelData/bullet.cmo");
+	m_model.SetDirectionLight(5.0f, 5.0f, 0.0f);
+	m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
+	bulletmoveSpeed = 10000.0f;
+	damage = 10;
+	lengthcount_MAX = 30;
+}
+void Player_BulletState::bulletmove()
+{
+	CVector3 m_moveSpeed = CVector3::Zero();
+	m_moveSpeed += m_forward * bulletmoveSpeed;
+	m_position = m_bulletCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
+																															//ワールド行列の更新。
+	m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
+	lengthcount += 1;
+
+	//弾がステージと接触したときに死亡フラグをあげる。
+	if (m_bulletCon.Gethit() == true) {
+		//ステージに衝突した際に、死亡フラグをあげる。
+		desflag = true;
+	}
+	//弾が発射されて一定距離進んだときに死亡フラグをあげる。
+	if (lengthcount >= lengthcount_MAX) {
+		//一定距離進んだ際に、死亡フラグをあげる。
+		desflag = true;
+	}
+}
+void Player_BulletState::Hitbullet(Enemy* enemy)
+{
+	CVector3 v = m_position - enemy->GetPosition_center();
+	float len = v.Length();//長さ
+						   //敵と衝突した(距離が90.0f以下なら)ら
+	if (len <= 90.0f) {
+		//当たった弾の死亡フラグをあげる。
+		desflag = true;
+		//敵と弾の距離を測り、当たっていればダメージ。
+		enemy->enemyDamage(damage);
+	}
+}
+void Player_BulletState::Draw() {
+	m_model.Draw(
+		enRenderMode_Normal,
+		g_camera3D.GetViewMatrix(),
+		g_camera3D.GetProjectionMatrix()
+	);
 }
 
 
-Player_BulletManager::~Player_BulletManager()
+void Player_MineState::Init(CVector3 p_position)
 {
-
+	desflag = false;
+	explosion = false;//爆発フラグを初期化。
+	m_position = p_position;
+	m_position.y += 50.0f;
+	m_model.Init(L"Assets/modelData/Mine.cmo");
+	m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
+	MineDamage = 100;
+	blastrange = 600;
 }
+
+void Player_MineState::Hitmine(Enemy* enemy)
+{
+	CVector3 v = m_position - enemy->GetPosition_center();
+	float len = v.Length();//長さ
+	 //敵と衝突した(距離が200.0f以下なら)ら
+	if ((explosion == true) && (len <= blastrange)) {
+		//敵と弾の距離を測り、当たっていればダメージ。
+		enemy->enemyDamage(MineDamage);
+	}
+	else if (len <= (blastrange/3)) {
+		//当たった弾の死亡フラグをあげる。
+		explosion = true;
+		desflag = true;
+		//敵と弾の距離を測り、当たっていればダメージ。
+		enemy->enemyDamage(MineDamage);
+	}
+}
+void Player_MineState::Draw()
+{
+	m_model.Draw(
+		enRenderMode_Normal,
+		g_camera3D.GetViewMatrix(),
+		g_camera3D.GetProjectionMatrix()
+	);
+}
+
+void Player_Blackhole::Init(CVector3 p_position, CVector3 p_forward)
+{
+	desflag = false;
+	m_position = p_position;
+	m_forward = p_forward;
+	m_position += p_forward * 90.0f;
+	m_position.y += 90.0f;
+	explosion = false;//爆発フラグを初期化。
+	time = 0.0f;
+	m_bulletCon.Init(
+		10.0f,
+		m_position
+	);
+	lengthcount = 0;
+	
+	m_model.Init(L"Assets/modelData/hole.cmo");
+	m_model.SetDirectionLight(5.0f, 5.0f, 0.0f);
+	m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
+	bulletmoveSpeed = 5000.0f;
+	BlackholeDamage = 5;
+	blackholeTime = 300.0f;
+	lengthcount_MAX = 30;
+	blackholeAbsorb = 2000.0f;
+}
+
+void Player_Blackhole::bulletmove(Effekseer::Effect* m_blackholeEffect)
+{
+	//爆発していなかったら進む。
+	if (explosion != true) {
+		CVector3 m_moveSpeed = CVector3::Zero();
+		m_moveSpeed += m_forward*bulletmoveSpeed / 20;
+		m_position = m_bulletCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
+																																	  //ワールド行列の更新。
+		m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
+		lengthcount += 1;
+	}
+	else {
+		//時間経過で拡大する。
+		float holesc = 1.0f + time / 5.0f;
+		if (holesc >= 6.5f) {
+			holesc = 6.5f;
+		}
+		m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), { holesc,holesc,holesc });
+		time++;
+		if (time >= blackholeTime) {
+			//生成時間を過ぎたら死亡フラグをあげる。
+			desflag = true;
+		}
+	}
+
+	if (m_bulletCon.Gethit() == true) {
+		//ステージに衝突した際に、爆発フラグをあげる。
+		if (explosion != true) {
+			G_EffekseerManager().Play(m_blackholeEffect, m_position);
+			explosion = true;
+		}
+	}
+
+	if (lengthcount >= lengthcount_MAX) {
+		//ステージに衝突した際に、爆発フラグをあげる。
+		if (explosion != true) {
+			G_EffekseerManager().Play(m_blackholeEffect, m_position);
+			explosion = true;
+		}
+	}
+}
+
+void Player_Blackhole::HitBlackhole(Enemy* enemy, Effekseer::Effect* m_blackholeEffect)
+{
+	CVector3 v = m_position - enemy->GetPosition_center();
+	float len = v.Length();//長さ
+	 //敵と衝突した(距離が吸収範囲以下なら)ら
+	if ((explosion == true) && (len <= blackholeAbsorb)) {
+		//敵と弾の距離を測り、当たっていればダメージ。
+		enemy->enemyDamage_Blackhole(BlackholeDamage, m_position);
+
+	}
+	else if ((explosion == false) && (len <= 90.0f)) {
+		//当たった弾の爆発フラグをあげて、エフェクトを再生する。
+		explosion = true;
+		G_EffekseerManager().Play(m_blackholeEffect, m_position);
+		//敵と弾の距離を測り、当たっていればダメージ。
+		enemy->enemyDamage_Blackhole(BlackholeDamage, m_position);
+	}
+}
+void Player_Blackhole::Draw()
+{
+	if (explosion != true) {//ブラックホールが生成されていなかったら描画。
+		m_model.Draw(
+			enRenderMode_Normal,
+			g_camera3D.GetViewMatrix(),
+			g_camera3D.GetProjectionMatrix()
+		);
+	}
+}
+
 
 void Player_BulletManager::OnDestroy()
 {
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		//発射している弾だけ
-		if (bullet[i].flag == true) {
-			//剛体を削除。
-			bullet[i].m_bulletCon.RemoveRigidBoby();
-		}
-	}
-
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		//発射している弾だけ
-		if (blackhole[i].flag == true) {
-			//剛体を削除。
-			blackhole[i].m_bulletCon.RemoveRigidBoby();
-		}
-	}
-
-	//エフェクトを破棄。
-	if (m_sampleEffect != nullptr) {
-		m_sampleEffect->Release();
-	}
+	erasebullet_All();
 
 	//エフェクトを破棄。
 	if (m_blackholeEffect != nullptr) {
@@ -48,34 +213,6 @@ void Player_BulletManager::OnDestroy()
 
 void Player_BulletManager::Start()
 {
-	//cmoファイルの読み込み。
-	//m_modelproto.Init(L"Assets/modelData/bullet.cmo");
-	//m_modelproto.SetDirectionLight(5.0f,5.0f,0.0f);
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		//flagをfalseにして、発射されていないように初期化する。
-		bullet[i].flag = false;
-		bullet[i].desflag = false;
-		bullet[i].m_model.Init(L"Assets/modelData/bullet.cmo");
-		//bullet[i].m_model.Init(L"Assets/modelData/EnemyBullet.cmo");
-		bullet[i].m_model.SetDirectionLight(5.0f, 5.0f, 0.0f);
-	}
-
-	for (int i = 0; i < Player_Mine_NUM; i++) {
-		mine[i].flag = false;
-		mine[i].desflag = false;
-		mine[i].explosion = false;
-		mine[i].m_model.Init(L"Assets/modelData/Mine.cmo");
-		mine[i].blastrange = 600.0f;//爆風の範囲を設定。
-	}
-
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		//flagをfalseにして、発射されていないように初期化する。
-		blackhole[i].flag = false;
-		blackhole[i].desflag = false;
-		blackhole[i].time = 0.0f;
-		blackhole[i].m_model.Init(L"Assets/modelData/hole.cmo");
-		blackhole[i].m_model.SetDirectionLight(5.0f, 5.0f, 0.0f);
-	}
 
 	for (int i = 0; i < Player_Missile_NUM; i++) {
 		//flagをfalseにして、発射されていないように初期化する。
@@ -89,13 +226,6 @@ void Player_BulletManager::Start()
 	//ミサイルアモ。今回は55発。
 	missile_ammo_NUM = 55;
 
-	//サンプルのエフェクトをロードする。
-	m_sampleEffect = Effekseer::Effect::Create(
-		G_EffekseerManager().GetManager(),
-		(const EFK_CHAR*)L"Assets/effect/black hole.efk",
-		20.0f
-	);
-
 	//ブラックホールのエフェクトをロードする。
 	m_blackholeEffect = Effekseer::Effect::Create(
 		G_EffekseerManager().GetManager(),
@@ -106,12 +236,12 @@ void Player_BulletManager::Start()
 
 void Player_BulletManager::Update()
 {
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		//発射している弾だけ
-		if (bullet[i].flag == true) {
-			//通常弾。
-			Normalbullet_move(i);
-		}
+	for (std::list<Player_BulletState*>::iterator itr = P_BulletList.begin(); itr != P_BulletList.end(); itr++) {
+		(*itr)->bulletmove();//追尾先の座標。
+	}
+
+	for (Player_Blackhole* p_black : P_BlackholeList) {
+		p_black->bulletmove(m_blackholeEffect);
 	}
 
 	for (int i = 0; i < Player_Missile_NUM; i++) {
@@ -122,24 +252,7 @@ void Player_BulletManager::Update()
 		}
 	}
 
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		//発射しているブラックホール弾だけ
-		if (blackhole[i].flag == true) {
-			//ブラックホール弾。
-			Blackhole_move(i);
-		}
-	}
-	//弾がステージと接触したときに死亡フラグをあげる。
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		//発射している弾だけ
-		if (bullet[i].flag == true) {
-			if (bullet[i].m_bulletCon.Gethit() == true) {
-				//ステージに衝突した際に、死亡フラグをあげる。
-				bullet[i].desflag = true;
-			}
-		}
-	}
-
+	
 	//ミサイルがステージと接触したときに死亡フラグをあげる。
 	for (int i = 0; i < Player_Missile_NUM; i++) {
 		//発射している弾だけ
@@ -151,29 +264,7 @@ void Player_BulletManager::Update()
 		}
 	}
 
-	//ブラックホール弾がステージと接触したときに死亡フラグをあげる。
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		//発射している弾だけ
-		if (blackhole[i].flag == true) {
-			if (blackhole[i].m_bulletCon.Gethit() == true) {
-				//ステージに衝突した際に、爆発フラグをあげる。
-				if (blackhole[i].explosion!=true) {
-					G_EffekseerManager().Play(m_blackholeEffect, blackhole[i].m_position);
-					blackhole[i].explosion = true;
-				}			
-			}
-		}
-	}
-	//弾が発射されて一定距離進んだときに死亡フラグをあげる。
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		if (bullet[i].flag == true) {
-			if (bullet[i].lengthcount >= 20) {
-				//一定距離進んだ際に、死亡フラグをあげる。
-				bullet[i].desflag = true;
-			}
-		}
-	}
-
+	
 	//ミサイルが発射されて一定距離進んだときに死亡フラグをあげる。
 	for (int i = 0; i < Player_Missile_NUM; i++) {
 		if (missile[i].flag == true) {
@@ -184,51 +275,6 @@ void Player_BulletManager::Update()
 		}
 	}
 
-	//ブラックホール弾が発射されて一定距離進んだときに死亡フラグをあげる。
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		if (blackhole[i].flag == true) {
-			if (blackhole[i].lengthcount >= 30) {
-				//ステージに衝突した際に、爆発フラグをあげる。
-				if (blackhole[i].explosion != true) {
-					G_EffekseerManager().Play(m_blackholeEffect, blackhole[i].m_position);
-					blackhole[i].explosion = true;
-				}
-			}
-		}
-	}
-	//死亡フラグがたった弾を削除する。
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		if (bullet[i].desflag == true) {
-			//剛体を削除。
-			bullet[i].m_bulletCon.RemoveRigidBoby();
-			//削除されたのでフラグをリセット。
-			bullet[i].flag = false;
-			bullet[i].desflag = false;
-		}
-	}
-
-	//死亡フラグがたったマインを削除する。
-	for (int i = 0; i < Player_Mine_NUM; i++) {
-		if (mine[i].desflag == true) {
-			
-			//再生。
-			m_mineEffectHandle = G_EffekseerManager().Play(m_sampleEffect, mine[i].m_position);
-			//削除されたのでフラグをリセット。
-			mine[i].flag = false;
-			mine[i].desflag = false;
-		}
-	}
-
-	//死亡フラグがたったブラックホール弾を削除する。
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		if (blackhole[i].desflag == true) {
-			//剛体を削除。
-			blackhole[i].m_bulletCon.RemoveRigidBoby();
-			//削除されたのでフラグをリセット。
-			blackhole[i].flag = false;
-			blackhole[i].desflag = false;
-		}
-	}
 	//死亡フラグがたったミサイルを削除する。
 	for (int i = 0; i < Player_Missile_NUM; i++) {
 		if (missile[i].desflag == true) {
@@ -257,76 +303,42 @@ void Player_BulletManager::Update()
 	if (blackholecount >= 1) {
 		blackholecount++;
 	}
-	if (blackholecount >= 50) {
+	if (blackholecount >= 300) {
 		blackholecount = 0;
 	}
+	erasebullet();//不要な弾の削除。
 }
 
 void Player_BulletManager::bulletShot(const CVector3 p_position, const CVector3 p_forward)
 {
-	if (count == 0) {
-		for (int i = 0; i < Player_Bullet_NUM; i++) {
-			if (bullet[i].flag == false) {
-				bullet[i].flag = true;
-				bullet[i].desflag = false;
-				bullet[i].m_position = p_position;
-				bullet[i].m_forward = p_forward;
-				bullet[i].m_position += p_forward * 90.0f;
-				bullet[i].m_position.y += 90.0f;
-				bullet[i].m_bulletCon.Init(
-					10.0f,
-					bullet[i].m_position
-				);
-				bullet[i].lengthcount = 0;
-				count = 1;
-				bullet[i].m_model.UpdateWorldMatrix(bullet[i].m_position, CQuaternion::Identity(), CVector3::One());
-				break;
-			}
-		}
+	if (count == 0) {//連射防止
+		Player_BulletState* bullet;
+		bullet = new(Player_BulletState);
+		bullet->Init(p_position, p_forward);
+		P_BulletList.push_back(bullet);
+		count = 1;
 	}
 }
 
 void Player_BulletManager::mineShot(const CVector3 p_position)
 {
-	if (count == 0) {
-		for (int i = 0; i < Player_Mine_NUM; i++) {
-			if (mine[i].flag == false) {
-				mine[i].flag = true;
-				mine[i].desflag = false;
-				mine[i].explosion = false;//爆発フラグを初期化。
-				mine[i].m_position = p_position;
-				mine[i].m_position.y += 50.0f;
-				minecount = 1;
-				mine[i].m_model.UpdateWorldMatrix(mine[i].m_position, CQuaternion::Identity(), CVector3::One());
-				break;
-			}
-		}
+	if (minecount == 0) {//連射防止
+		Player_MineState* mine;
+		mine = new(Player_MineState);
+		mine->Init(p_position);
+		P_MineList.push_back(mine);
+		minecount = 1;
 	}
 }
 
 void Player_BulletManager::BlackholeShot(const CVector3 p_position, const CVector3 p_forward)
 {
-	if (blackholecount == 0) {
-		for (int i = 0; i < Player_Blackhole_NUM; i++) {
-			if (blackhole[i].flag == false) {
-				blackhole[i].flag = true;
-				blackhole[i].desflag = false;
-				blackhole[i].m_position = p_position;
-				blackhole[i].m_forward = p_forward;
-				blackhole[i].m_position += p_forward * 90.0f;
-				blackhole[i].m_position.y += 90.0f;
-				blackhole[i].explosion = false;//爆発フラグを初期化。
-				blackhole[i].time = 0.0f;
-				blackhole[i].m_bulletCon.Init(
-					10.0f,
-					blackhole[i].m_position
-				);
-				blackhole[i].lengthcount = 0;
-				blackholecount = 1;
-				blackhole[i].m_model.UpdateWorldMatrix(blackhole[i].m_position, CQuaternion::Identity(), CVector3::One());
-				break;
-			}
-		}
+	if (blackholecount == 0) {//連射防止
+		Player_Blackhole* blackhole;
+		blackhole = new(Player_Blackhole);
+		blackhole->Init(p_position, p_forward);
+		P_BlackholeList.push_back(blackhole);
+		blackholecount = 1;
 	}
 }
 void Player_BulletManager::missileShot(const CVector3 p_position, const CVector3 p_forward)
@@ -354,112 +366,30 @@ void Player_BulletManager::missileShot(const CVector3 p_position, const CVector3
 }
 void Player_BulletManager::EnemyHit(Enemy* enemy)
 {
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		//発射している弾だけ
-		if (bullet[i].flag == true) {
-			CVector3 v = bullet[i].m_position - enemy->GetPosition_center();
-			float len = v.Length();//長さ
-								   //敵と衝突した(距離が90.0f以下なら)ら
-			if (len <= 90.0f) {
-				//当たった弾の死亡フラグをあげる。
-				bullet[i].desflag = true;
-				//敵と弾の距離を測り、当たっていればダメージ。
-				enemy->enemyDamage(BulletDamage);
-			}
-		}
+	for (Player_BulletState* p_bullet : P_BulletList) {
+		p_bullet->Hitbullet(enemy);
 	}
 }
 
 void Player_BulletManager::mineexplosion() {
-	for (int i = 0; i < Player_Mine_NUM; i++) {
-		//設置しているマインだけ
-		if (mine[i].flag == true) {
-			//当たった弾の死亡フラグをあげる。
-			mine[i].explosion = true;
-			mine[i].desflag = true;
-		}
+	//全起爆。
+	for (Player_MineState* p_mine : P_MineList) {
+		p_mine->Setexplosion(true);
+		p_mine->Setdesflag(true);
 	}
 }
 
 void Player_BulletManager::EnemyHitMine(Enemy* enemy)
 {
-	for (int i = 0; i < Player_Mine_NUM; i++) {
-		//設置しているマインだけ
-		if (mine[i].flag == true) {
-			CVector3 v = mine[i].m_position - enemy->GetPosition_center();
-			float len = v.Length();//長さ
-								   //敵と衝突した(距離が200.0f以下なら)ら
-			if ((mine[i].explosion == true) && (len <= mine[i].blastrange)) {
-				//敵と弾の距離を測り、当たっていればダメージ。
-				enemy->enemyDamage(MineDamage);
-			}
-			else if (len <= 200.0f) {
-				//当たった弾の死亡フラグをあげる。
-				mine[i].explosion = true;
-				mine[i].desflag = true;
-				//敵と弾の距離を測り、当たっていればダメージ。
-				enemy->enemyDamage(MineDamage);
-			}
-		}
+	for (Player_MineState* p_mine : P_MineList) {
+		p_mine->Hitmine(enemy);
 	}
 }
 
 void Player_BulletManager::EnemyHitBlackhole(Enemy* enemy)
 {
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		//発射しているブラックホールだけ
-		if (blackhole[i].flag == true) {
-			CVector3 v = blackhole[i].m_position - enemy->GetPosition_center();
-			float len = v.Length();//長さ
-								   //敵と衝突した(距離が吸収範囲以下なら)ら
-			if ((blackhole[i].explosion == true) && (len <= blackholeAbsorb)) {
-				//敵と弾の距離を測り、当たっていればダメージ。
-				enemy->enemyDamage_Blackhole(BlackholeDamage, blackhole[i].m_position);
-				
-			}
-			else if ((blackhole[i].explosion==false)&&(len <= 90.0f)) {
-				//当たった弾の爆発フラグをあげて、エフェクトを再生する。
-				blackhole[i].explosion = true;
-				G_EffekseerManager().Play(m_blackholeEffect, blackhole[i].m_position);
-				//敵と弾の距離を測り、当たっていればダメージ。
-				enemy->enemyDamage_Blackhole(BlackholeDamage, blackhole[i].m_position);
-			}
-		}
-	}
-}
-
-void Player_BulletManager::Normalbullet_move(int bulletNumber)
-{
-	CVector3 m_moveSpeed = CVector3::Zero();
-	m_moveSpeed += bullet[bulletNumber].m_forward*bulletmoveSpeed;
-	bullet[bulletNumber].m_position = bullet[bulletNumber].m_bulletCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
-																															//ワールド行列の更新。
-	bullet[bulletNumber].m_model.UpdateWorldMatrix(bullet[bulletNumber].m_position, CQuaternion::Identity(), CVector3::One());
-	bullet[bulletNumber].lengthcount += 1;
-}
-
-void Player_BulletManager::Blackhole_move(int bulletNumber)
-{
-	//爆発していなかったら進む。
-	if (blackhole[bulletNumber].explosion != true) {
-		CVector3 m_moveSpeed = CVector3::Zero();
-		m_moveSpeed += blackhole[bulletNumber].m_forward*bulletmoveSpeed / 20;
-		blackhole[bulletNumber].m_position = blackhole[bulletNumber].m_bulletCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
-																																//ワールド行列の更新。
-		blackhole[bulletNumber].m_model.UpdateWorldMatrix(blackhole[bulletNumber].m_position, CQuaternion::Identity(), CVector3::One());
-		blackhole[bulletNumber].lengthcount += 1;
-	}
-	else {
-		float holesc = 1.0f+blackhole[bulletNumber].time/5.0f;
-		if (holesc >= 6.5f) {
-			holesc = 6.5f;
-		}
-		blackhole[bulletNumber].m_model.UpdateWorldMatrix(blackhole[bulletNumber].m_position, CQuaternion::Identity(), { holesc,holesc,holesc});
-		blackhole[bulletNumber].time++;
-		if (blackhole[bulletNumber].time >= blackholeTime) {
-			//生成時間を過ぎたら死亡フラグをあげる。
-			blackhole[bulletNumber].desflag = true;
-		}
+	for (Player_Blackhole* p_blackhole : P_BlackholeList) {
+		p_blackhole->HitBlackhole(enemy, m_blackholeEffect);
 	}
 }
 
@@ -467,35 +397,70 @@ void Player_BulletManager::missile_move(int missileNumber)
 {
 
 }
+
+void Player_BulletManager::erasebullet()
+{
+	for (std::list<Player_BulletState*>::iterator itr = P_BulletList.begin(); itr != P_BulletList.end(); ) {
+		if ((*itr)->Getdesflag() == true) {
+			//死亡していれば削除する。
+			delete(*itr);
+			itr = P_BulletList.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	for (std::list<Player_MineState*>::iterator itr = P_MineList.begin(); itr != P_MineList.end(); ) {
+		if ((*itr)->Getdesflag() == true) {
+			//死亡していれば削除する。
+			delete(*itr);
+			itr = P_MineList.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+
+	for (std::list<Player_Blackhole*>::iterator itr = P_BlackholeList.begin(); itr != P_BlackholeList.end(); ) {
+		if ((*itr)->Getdesflag() == true) {
+			//死亡していれば削除する。
+			delete(*itr);
+			itr = P_BlackholeList.erase(itr);
+		}
+		else {
+			itr++;
+		}
+	}
+}
+void Player_BulletManager::erasebullet_All()
+{
+	for (std::list<Player_BulletState*>::iterator itr = P_BulletList.begin(); itr != P_BulletList.end(); ) {
+		delete(*itr);
+		itr = P_BulletList.erase(itr);
+	}
+
+	for (std::list<Player_MineState*>::iterator itr = P_MineList.begin(); itr != P_MineList.end(); ) {
+		delete(*itr);
+		itr = P_MineList.erase(itr);
+	}
+
+	for (std::list<Player_Blackhole*>::iterator itr = P_BlackholeList.begin(); itr != P_BlackholeList.end(); ) {
+		delete(*itr);
+		itr = P_BlackholeList.erase(itr);
+	}
+}
 void Player_BulletManager::Draw()
 {
-	for (int i = 0; i < Player_Bullet_NUM; i++) {
-		if (bullet[i].flag == true) {
-			bullet[i].m_model.Draw(
-				enRenderMode_Normal,
-				g_camera3D.GetViewMatrix(),
-				g_camera3D.GetProjectionMatrix()
-			);
-		}
+	for (std::list<Player_BulletState*>::iterator itr = P_BulletList.begin(); itr != P_BulletList.end(); itr++) {
+		(*itr)->Draw();
 	}
 
-	for (int i = 0; i < Player_Mine_NUM; i++) {
-		if (mine[i].flag == true) {
-			mine[i].m_model.Draw(
-				enRenderMode_Normal,
-				g_camera3D.GetViewMatrix(),
-				g_camera3D.GetProjectionMatrix()
-			);
-		}
+	for (Player_MineState* p_mine : P_MineList) {
+		p_mine->Draw();
 	}
 
-	for (int i = 0; i < Player_Blackhole_NUM; i++) {
-		if ((blackhole[i].flag == true)&&(blackhole[i].explosion != true)) {
-			blackhole[i].m_model.Draw(
-				enRenderMode_Normal,
-				g_camera3D.GetViewMatrix(),
-				g_camera3D.GetProjectionMatrix()
-			);
-		}
+	for (Player_Blackhole* p_blackhole : P_BlackholeList) {
+		p_blackhole->Draw();
 	}
 }

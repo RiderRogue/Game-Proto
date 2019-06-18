@@ -3,35 +3,84 @@
 #include "character/BulletController.h"
 #include "Enemy.h"
 using namespace YTEngine;
-struct Player_BulletState {
-	bool flag;//弾丸が発射中かどうか
+class Player_BulletState {
+public:
+	Player_BulletState(){}
+	virtual ~Player_BulletState(){}
+	virtual void Init(CVector3 p_position, CVector3 p_forward);
+	virtual void bulletmove();
+	virtual void Draw();
+
+	virtual void Hitbullet(Enemy* enemy);
+	virtual bool Getdesflag() {
+		return desflag;
+	}
+private:
 	CVector3 m_position;
 	CVector3 m_forward;
 	SkinModel m_model;				   //スキンモデル。
 	BulletController m_bulletCon;    //弾丸の剛体。
 	int lengthcount;                   //弾丸の移動距離。
+	int lengthcount_MAX;                   //移動距離の限界。
+	int damage;                       //ダメージ。
 	bool desflag;                      //生存しているか？
+	float bulletmoveSpeed;   //弾の移動速度。
 };
 
-struct Player_MineState {
-	bool flag;//マインが設置中かどうか
+class Player_MineState {
+public:
+	Player_MineState(){}
+	~Player_MineState(){}
+	virtual void Init(CVector3 p_position);
+	virtual void Draw();
+	virtual void Hitmine(Enemy* enemy);
+	virtual bool Getdesflag() {
+		return desflag;
+	}
+	void Setexplosion(bool ex)
+	{
+		explosion = ex;
+	}
+	void Setdesflag(bool des)
+	{
+		desflag = des;
+	}
+private:
 	bool explosion; //爆発したかどうか
 	CVector3 m_position;
 	SkinModel m_model;				  //スキンモデル。
 	float blastrange;                 //爆発範囲。
 	bool desflag;                     //生存しているか？
+	int MineDamage;
 };
 
-struct Player_Blackhole {
-	bool flag;//弾丸が発射中かどうか
-	bool explosion; //爆発したかどうか
+class Player_Blackhole {
+public:
+	Player_Blackhole() {}
+	virtual ~Player_Blackhole(){}
+	virtual void Init(CVector3 p_position, CVector3 p_forward);
+	virtual void bulletmove(Effekseer::Effect* m_blackholeEffect);
+	virtual void Draw();
+
+	virtual void HitBlackhole(Enemy* enemy, Effekseer::Effect* m_blackholeEffect);
+	virtual bool Getdesflag() {
+		return desflag;
+	}
+private:
+	
 	CVector3 m_position;
 	CVector3 m_forward;
 	SkinModel m_model;				   //スキンモデル。
 	BulletController m_bulletCon;    //弾丸の剛体。
 	int lengthcount;                   //弾丸の移動距離。
+	int lengthcount_MAX;              //移動距離の限界。
+	int BlackholeDamage;//毎フレームごとのダメージ。
+	bool explosion; //爆発したかどうか
 	bool desflag;                      //生存しているか？
 	float time;
+	float bulletmoveSpeed;   //弾の移動速度。
+	float blackholeTime;         //ブラックホールの生成時間。
+	float blackholeAbsorb;         //ブラックホールの吸収範囲。
 };
 struct Player_MissileState {
 	bool flag;//弾丸が発射中かどうか
@@ -46,8 +95,8 @@ struct Player_MissileState {
 class Player_BulletManager
 {
 public:
-	Player_BulletManager();
-	~Player_BulletManager();
+	Player_BulletManager(){}
+	~Player_BulletManager(){}
 	void Start();
 	void Update();
 	void Draw();
@@ -75,7 +124,7 @@ public:
 	/// <param name="p_position">プレイヤーの座標</param>
 	void mineShot(const CVector3 p_position);
 
-	void mineexplosion();
+	void mineexplosion();//全起爆
 
 	/// <summary>
 	///ブラックホール弾の発射処理。
@@ -100,19 +149,13 @@ public:
 	/// <param name="p_position">プレイヤーの座標</param>
 	/// <param name="lightDir">プレイヤーの前方</param>
 	void missileShot(const CVector3 p_position, const CVector3 p_forward);
-	/*!
-	*@brief	通常弾の制御。
-	*/
-	void Normalbullet_move(int bulletNumber);
+
 	/*!
 	*@brief	ミサイルの制御。
 	*/
 	void missile_move(int missiletNumber);
 
-	/*!
-	*@brief	ブラックホール弾の制御。
-	*/
-	void Blackhole_move(int bulletNumber);
+	
 	/*!
 	*@brief	敵との当たり判定。
 	*/
@@ -136,30 +179,34 @@ public:
 		static Player_BulletManager instance;//Player_BulletManagerのインスタンスを生成。
 		return instance;
 	}
+
+	//不要な敵弾の削除。
+	void erasebullet();
+	//不要なプレイヤーの弾の全削除。
+	void erasebullet_All();
 private:
-	static const int Player_Bullet_NUM = 10;       //弾丸の配列の数。
-	static const int Player_Mine_NUM = 5;          //マインの配列の数。
 	static const int Player_Blackhole_NUM = 1;     //ブラックホールの配列の数。
 	static const int Player_Missile_NUM = 10;      //ミサイルの配列の数。
-	const float bulletmoveSpeed = 10000.0f;           //弾速。
 	const float blackholeAbsorb = 2000.0f;         //ブラックホールの吸収範囲。
 	const float blackholeTime = 300.0f;         //ブラックホールの生成時間。
-	const int BulletDamage = 10;
-	const int MineDamage = 100;
 	const int BlackholeDamage = 5;
 	int count = 0;
 	int minecount = 0;
 	int blackholecount = 0;
-	int missile_ammo_NUM;//ミサイルの弾薬の数。
-	Player_BulletState bullet[Player_Bullet_NUM];  //弾丸の配列。    
-	Player_MineState mine[Player_Mine_NUM];  //マインの配列。
+	int missile_ammo_NUM;//ミサイルの弾薬の数。   
 	Player_Blackhole blackhole[Player_Blackhole_NUM];  //ブラックホールの配列。
 	Player_MissileState missile[Player_Missile_NUM];//ミサイルの配列。
-	SkinModel m_modelproto;						   //スキンモデルのプロトタイプ。
 
 	Effekseer::Effect* m_sampleEffect = nullptr;
 	Effekseer::Effect* m_blackholeEffect = nullptr;
 	Effekseer::Handle m_mineEffectHandle = -1;
+
+	//プレイヤーの弾を格納する。
+	std::list<Player_BulletState*>P_BulletList;
+	//プレイヤーのマインを格納する。
+	std::list<Player_MineState*>P_MineList; 
+	//プレイヤーのマインを格納する。
+	std::list<Player_Blackhole*>P_BlackholeList;
 	//Effekseer::Handle m_pBulletEffectHandle = -1;
 };
 
