@@ -275,7 +275,7 @@ float4 PSMain( PSInput In ) : SV_Target0
 
 			//④ pow関数を使って、スペキュラを絞る。絞りの強さは定数バッファで渡されている。
 			//	 LightCbを参照するように。
-			float3 specLig = pow(spec, specPow);
+			float3 specLig = pow(spec, specPow*5.0f);
 			//return float4(specLig, 1.0f);
 			//return float4(specLig, 1.0f);
 			//⑤ スペキュラ反射が求まったら、ligに加算する。
@@ -287,7 +287,7 @@ float4 PSMain( PSInput In ) : SV_Target0
 
 	
 	if (NUM_DIRECTION_LIG == 4) {
-		finalColor.xyz = albedoColor.xyz * lig ;// albedoColor.xyz*0.3;
+		finalColor.xyz = albedoColor.xyz * lig + albedoColor.xyz*0.3;
 	}
 	return finalColor;
 }

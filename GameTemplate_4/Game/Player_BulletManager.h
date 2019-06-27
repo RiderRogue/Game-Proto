@@ -66,6 +66,8 @@ public:
 	virtual bool Getdesflag() {
 		return desflag;
 	}
+
+	CVector3 AbsorbEnemyBullet(CVector3 e_bullet);
 private:
 	
 	CVector3 m_position;
@@ -179,22 +181,23 @@ public:
 		static Player_BulletManager instance;//Player_BulletManagerのインスタンスを生成。
 		return instance;
 	}
-
+	
+	/*!
+	*@brief ブラックホールの敵弾吸収。
+	*@param[in] e_bullet    カメラの右方向の単位ベクトル。
+	*@return 吸い込む移動ベクトル。
+	*/
+	CVector3 Blackhole_EnemyBullet(CVector3 e_bullet);
 	//不要な敵弾の削除。
 	void erasebullet();
 	//不要なプレイヤーの弾の全削除。
 	void erasebullet_All();
 private:
-	static const int Player_Blackhole_NUM = 1;     //ブラックホールの配列の数。
-	static const int Player_Missile_NUM = 10;      //ミサイルの配列の数。
-	const float blackholeAbsorb = 2000.0f;         //ブラックホールの吸収範囲。
-	const float blackholeTime = 300.0f;         //ブラックホールの生成時間。
-	const int BlackholeDamage = 5;
+	static const int Player_Missile_NUM = 10;      //ミサイルの配列の数。	
 	int count = 0;
 	int minecount = 0;
 	int blackholecount = 0;
 	int missile_ammo_NUM;//ミサイルの弾薬の数。   
-	Player_Blackhole blackhole[Player_Blackhole_NUM];  //ブラックホールの配列。
 	Player_MissileState missile[Player_Missile_NUM];//ミサイルの配列。
 
 	Effekseer::Effect* m_sampleEffect = nullptr;

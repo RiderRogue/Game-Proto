@@ -134,16 +134,7 @@ void Gamecamera::Update()
 	static const float cameraspeedMIN_boost = -150.0f;
 	if (Player_moveside == 0.0f) {
 		cameraspeed = 0.0f;
-		/*if (cameraspeed<0.0f) {
-			cameraspeed += 10.0f;
-		}
-		else {
-			cameraspeed = 0.0f;
-		}*/
-		/*if () {
-		Camera_position = Post_Camera_position *m_rite * lStick_x*(-50.0f);
-		Targetposition -= m_rite * lStick_x*(-50.0f);
-	}*/
+		
 	}
 	else {
 		//2つの値の横の移動量は一緒。
@@ -246,32 +237,14 @@ void Gamecamera::Update()
 			Targetplus = 120.0f;
 		}
 	}
-	//if (rStick_y > 0.0f) {
-	//	//入力量を記録。
-	//	Cameraplus = rStick_y;
-	//}
-	/*if (rStick_y<0.0f) {
-		Camera_position.y += rStick_y * (-100.0f);
-	}
-	else {
-		Targetposition.y += rStick_y * (100.0f);
-	}*/
+	
 	
 	//射角の設定。
 	CVector3 backvector = m_forward*(-1);
 	CVector3 camera_bulletangle = Camera_position - Targetposition;
 	camera_bulletangle.Normalize();
 	
-	/*if (g_pad[0].IsPress(enButtonRB2)) {
-		Camera_position += m_rite * lStick_x*(100.0f);
-		Targetposition += m_rite * lStick_x*(100.0f);
-	}*/
-
-	//Camera_position += m_rite*lStick_x * (-50.0f);
-
 	g_camera3D.SetTarget(Targetposition);
 	g_camera3D.SetPosition(Camera_position);
-	//g_camera3D.SetTarget({ 0.0f, 100.0f, 0.0f });
-	//g_camera3D.SetPosition({ 0.0f, 200.0f, 300.0f });
 	g_camera3D.Update();
 }

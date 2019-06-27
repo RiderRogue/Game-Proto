@@ -127,6 +127,7 @@ namespace YTEngine {
 			Set(_v.x, _v.y, _v.z);
 		}
 
+		
 
 		void Set(btVector3& _v)
 		{
@@ -285,6 +286,25 @@ namespace YTEngine {
 			Div(s);
 			return *this;
 		}
+
+		//////////////////////////////////
+		// 壁ずりベクトル
+		//
+		// front : 進行ベクトル
+		// normal: 衝突点での法線ベクトル
+		//
+		// 戻り値: 正規化壁ずりベクトル
+		static CVector3 calcWallScratchVector(const CVector3& front, const CVector3& normal);
+
+		//////////////////////////////////
+		// 反射ベクトル
+		//
+		// front : 進行ベクトル
+		// normal: 衝突点での法線ベクトル
+		//
+		// 戻り値: 正規化反射ベクトル
+		static CVector3 calcReflectVector(const CVector3& front, const CVector3& normal);
+		
 	public:
 		static CVector3 Zero()
 		{
@@ -649,5 +669,7 @@ namespace YTEngine {
 		result.Subtract(v0, v1);
 		return result;
 	}
+
+	
 }
 

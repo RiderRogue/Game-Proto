@@ -4,7 +4,7 @@
 */
 #include"Player.h"
 #include "character/EnemyController.h"
-#include "EnemyBulletManager.h"
+
 using namespace YTEngine;
 class Enemy : public IGameObject
 {
@@ -62,6 +62,7 @@ public:
 	//2つのベクトルの角度を角度表記(degree)で返す。
 	float VectorAngleDeg(CVector3 c);
 protected:
+	
 	CMatrix mRot;                                       //敵の回転行列。
 	CVector3 m_moveSpeed = CVector3::Zero();            //敵の移動速度。
 	CVector3 m_premoveSpeed = CVector3::Zero();         //クラス外からの敵の移動速度。
@@ -75,8 +76,8 @@ protected:
 	SkinModel m_model;									//スキンモデル。
 	EnemyController m_charaCon;                     //敵の剛体。
 	int enemy_HP;                                       //敵のHP。
-	const float enemy_height = 100.0f;		                //敵の高さ。
-	const float enemy_weight = 30.0f;                         //敵の半径。
+	float enemy_height = 100.0f;		                //敵の高さ。
+	float enemy_weight = 30.0f;                         //敵の半径。
 	bool enemy_damageflag = false;                          //敵のダメージ判定。
 	bool enemy_deathflag = false;                       //敵の死亡フラグ。Managerに使う。
     Player* player;                                     //プレイヤーのポインタ。

@@ -28,6 +28,12 @@ namespace YTEngine {
 		{
 			m_effekseerManager->StopEffect(handle);
 		}
+
+		//再生中のエフェクトの座標を設定。
+		void SetEffectposition(Effekseer::Handle handle,CVector3 pos)
+		{
+			m_effekseerManager->SetLocation(handle, pos.x, pos.y, pos.z);
+		}
 		/*!
 		*@brief	Effekseer::Managerの取得。
 		*/

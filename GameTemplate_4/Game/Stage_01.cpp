@@ -49,7 +49,7 @@ bool Stage_01::Start()
 	G_EnemyManager().Start();
 
 	for (CVector3 flyE_pos : FlyEnemylist) {
-		G_EnemyManager().spawnenemy(flyE_pos);
+		//G_EnemyManager().spawnenemy(flyE_pos);
 	}
 
 	return true;

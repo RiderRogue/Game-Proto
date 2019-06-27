@@ -27,15 +27,16 @@ void Player_BulletState::bulletmove()
 {
 	CVector3 m_moveSpeed = CVector3::Zero();
 	m_moveSpeed += m_forward * bulletmoveSpeed;
-	m_position = m_bulletCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
-																															//ワールド行列の更新。
+	m_position = m_bulletCon.ReflectExecute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
+	//m_forward = m_moveSpeed;//移動ベクトルの変更。
+	//ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
 	lengthcount += 1;
 
 	//弾がステージと接触したときに死亡フラグをあげる。
 	if (m_bulletCon.Gethit() == true) {
 		//ステージに衝突した際に、死亡フラグをあげる。
-		desflag = true;
+		//desflag = true;
 	}
 	//弾が発射されて一定距離進んだときに死亡フラグをあげる。
 	if (lengthcount >= lengthcount_MAX) {
@@ -196,6 +197,23 @@ void Player_Blackhole::Draw()
 			g_camera3D.GetProjectionMatrix()
 		);
 	}
+}
+
+CVector3 Player_Blackhole::AbsorbEnemyBullet(CVector3 e_bullet)
+{
+	CVector3 Absorb = m_position - e_bullet;
+	float len = Absorb.Length();//長さ
+	//ブラックホールが生成され、吸収範囲なら
+	if ((explosion == true) && (len <= blackholeAbsorb)) {
+		//吸収する。
+		Absorb.Normalize();
+		Absorb *= 2000.0f;
+	}
+	else {
+		//吸収されない。
+		Absorb = CVector3::Zero();
+	}
+	return Absorb;
 }
 
 
@@ -391,6 +409,16 @@ void Player_BulletManager::EnemyHitBlackhole(Enemy* enemy)
 	for (Player_Blackhole* p_blackhole : P_BlackholeList) {
 		p_blackhole->HitBlackhole(enemy, m_blackholeEffect);
 	}
+}
+
+CVector3 Player_BulletManager::Blackhole_EnemyBullet(CVector3 e_bullet)
+{
+	
+	CVector3 Absorb = CVector3::Zero();
+	for (Player_Blackhole* p_blackhole : P_BlackholeList) {
+		Absorb =p_blackhole->AbsorbEnemyBullet(e_bullet);
+	}
+	return Absorb;
 }
 
 void Player_BulletManager::missile_move(int missileNumber)

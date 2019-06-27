@@ -33,6 +33,13 @@ namespace YTEngine {
 		*/
 		virtual const CVector3& Execute(float deltaTime, CVector3& moveSpeed);
 		/*!
+		* @brief	実行。反射。
+		*@param[in]	deltaTime		経過時間。単位は秒。
+		*@param[in, out]	moveSpeed		移動速度。内部で重力加速が計算され、その結果がmoveSpeedに反映されます。
+		*@return 移動後のキャラクターの座標。
+		*/
+		const CVector3& ReflectExecute(float deltaTime, CVector3& moveSpeed);
+		/*!
 		* @brief	座標を取得。
 		*/
 		const CVector3& GetPosition() const

@@ -33,6 +33,7 @@ public:
 		return desflag;
 	}
 protected:
+	CVector3 m_moveSpeed;
 	CVector3 m_position;
 	CVector3 m_forward;
 	SkinModel m_model;				   //スキンモデル。
@@ -49,13 +50,23 @@ class Enemy_MissileState : public Enemy_BulletState
 public:
 	Enemy_MissileState() {}
 	~Enemy_MissileState() {}
-	void Init(CVector3 eposition, CVector3 eforward);
-	void bulletmove(CVector3 P_pos);
-private:
+	virtual void Init(CVector3 eposition, CVector3 eforward);
+	virtual void bulletmove(CVector3 P_pos, Effekseer::Effect* m_smokeEffect);
+protected:
 	CVector3 lockonPos;//ロックオンしたプレイヤーの座標。
 	CVector3 m_rite;
 	CQuaternion m_rotation = CQuaternion::Identity();   //ミサイルの回転
 	CMatrix mRot;                                       //敵の回転行列。
+	Effekseer::Handle m_smokeEffectHandle = -1;
+};
+
+class Enemy_VLS :public Enemy_MissileState
+{
+public:
+	Enemy_VLS() {}
+	~Enemy_VLS() {}
+	void Init(CVector3 eposition, CVector3 eforward);
+	void bulletmove(CVector3 P_pos, Effekseer::Effect* m_smokeEffect);
 };
 
 class EnemyBulletManager
@@ -91,6 +102,8 @@ public:
 	/// <param name="lightDir">敵の前方</param>
 	void MissileShot(const CVector3 e_position, const CVector3 e_forward);
 
+	void VLSShot(const CVector3 e_position, const CVector3 e_forward);
+
 	//不要な敵弾の削除。
 	void erasebullet();
 
@@ -108,6 +121,9 @@ public:
 private:
 	//敵弾を格納する。
 	std::list<Enemy_BulletState*>E_BulletList;
+	std::list<Enemy_MissileState*>E_MissileList;
+	Effekseer::Effect* m_smokeEffect = nullptr;
+	Effekseer::Handle m_smokeEffectHandle = -1;
 	
 	const int lengthcountMAX = 50;  //敵弾の移動距離の限界。
 	Player* player;

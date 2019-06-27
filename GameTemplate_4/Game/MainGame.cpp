@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MainGame.h"
-#include "Player.h"
+
 //#include "Gamecamera.h"
 //#include "EnemyManager.h"
 #include "GameBase/GameBase.h"
@@ -34,7 +34,7 @@ bool MainGame::Start()
 {
 	stage_num= FindGO<GameBase>("GameBase")->GetStage_num();
 	Player_desFlag = false;
-	NewGO<Player>(1, "Player");
+	player=NewGO<Player>(1, "Player");
 	switch (stage_num)
 	{
 	case 0:
@@ -93,7 +93,7 @@ void MainGame::Update()
 	//G_EnemyManager().Update();
 	//ワールド行列の更新。
 	//m_model.UpdateWorldMatrix(CVector3::Zero(), CQuaternion::Identity(), CVector3::One());
-	if (g_pad[0].IsPress(enButtonB)||(Player_desFlag==true))
+	if (player->GetPlayer_desflag()==true)
 	{
 		switch (stage_num)
 		{

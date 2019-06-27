@@ -18,6 +18,7 @@ public:
 	*@brief	敵のスポーン。
 	*/
 	void spawnenemy(CVector3 position);
+	void spawnGL(CVector3 position);
 	/*!
 	*@brief	EnemyManagerインスタンスの取得。
 	*/
@@ -35,9 +36,10 @@ private:
 	*@brief	敵の死亡処理。
 	*/
 	void Deleteenemy();
-	static const int Enemy_NUM = 10;       //敵の配列の数。
 	static const int LockonEnemy_NUM = 3;  //一度にロックオンできる敵の数。
-	EnemyState enemy_slot[Enemy_NUM];
+
+	//敵を格納する。
+	std::list<Enemy*>EnemyList;
 };
 
 //EnemyManagerのインスタンスを取得。

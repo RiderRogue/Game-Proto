@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "EnemyBoss_Launcher.h"
 #include "Player_BulletManager.h"
+#include "EnemyBulletManager.h"
 
 
 EnemyBoss_Launcher::EnemyBoss_Launcher()
@@ -84,9 +85,9 @@ void EnemyBoss_Launcher::Update()
 	case move:
 		Normalmove();
 		break;
-	/*case rotShot:
+	case rotShot:
 		RotateShot();
-		break;*/
+		break;
 	default:
 		Normalmove();
 		break;
@@ -135,7 +136,7 @@ void EnemyBoss_Launcher::PostDraw()
 
 void EnemyBoss_Launcher::Normalmove()
 {
-	static float move = -500.0f;
+	static float move = -2.0f;
 	static float distTmp;
 	CVector3 vDist;
 	vDist.Subtract(E_PosFront, m_position);
@@ -143,7 +144,7 @@ void EnemyBoss_Launcher::Normalmove()
 	distTmp = vDist.Length();
 	
 	if (distTmp > 250) {
-		m_moveSpeed = MoveVector * (-distTmp/2.0f);
+		m_moveSpeed = MoveVector * (distTmp/move);
 	}
 	else {
 		m_moveSpeed = CVector3::Zero();
@@ -155,55 +156,26 @@ void EnemyBoss_Launcher::Normalmove()
 		move *= -1.0f;
 	}
 
-	if (ActionCount >= 10) {
+	if (ActionCount >= 100) {
 		attack = rotShot;
-	}
-	else if (ActionCount >= 20) {
 		ActionCount = 0;
 	}
+	
 
 	
 	static int bulletcount = 0;
 	if (bulletcount == 0) {
-		G_EnemyBulletManager().MissileShot(R_LauncherPos, m_forward);
-		G_EnemyBulletManager().MissileShot(L_LauncherPos, m_forward);
+		G_EnemyBulletManager().bulletShot(R_LauncherPos, m_forward);
+		G_EnemyBulletManager().bulletShot(L_LauncherPos, m_forward);
 		bulletcount++;
 	}
 	else {
 		bulletcount++;
-		if (bulletcount >= 30) {
+		if (bulletcount >= 1) {
 			bulletcount = 0;
 		}
 	}
-	/*CVector3 vDist;
-	CVector3 P_pos = player->Getposition();
-	P_pos.y = 0.0f;
-	CVector3 mypos = m_position;
-	mypos.y = 0.0f;
-	vDist.Subtract(P_pos, mypos);
-	float angle = VectorAngleDeg(vDist);
-	vDist.y = 0.0f;
-	vDist.Normalize();
-	float cos=vDist.Dot(m_rite);
-	bool rotFlag = true;//‰ñ“]‚µ‚Ä‚¢‚¢‚©H
-
-	if (angle >= 30.0f) {
-		angle = 30.0f;
-	}
-	if (angle < 0.01f) {
-		rotFlag = false;
-	}
 	
-	//‰ñ“]B
-	if (rotFlag ==true) {
-		if (cos >= 0.0f) {
-			qBias.SetRotationDeg(CVector3::AxisY(), angle);
-		}
-		else {
-			qBias.SetRotationDeg(CVector3::AxisY(), -angle);
-		}
-		m_rotation.Multiply(qBias);
-	}*/
 	
 }
 void EnemyBoss_Launcher::RotateShot()
@@ -211,19 +183,19 @@ void EnemyBoss_Launcher::RotateShot()
 	static int count = 0;
 	static int bulletcount = 0;
 	static float rot_sum = 0.0f;
-	static float rot = 1.0f;
+	static float rot = 3.0f;
 	static float b_move = -1.0f;
 
 	if (bulletcount == 0) {
-		//G_EnemyBulletManager().bulletShot(R_LauncherPos, m_forward);
-		//G_EnemyBulletManager().bulletShot(L_LauncherPos, m_forward);
 		G_EnemyBulletManager().MissileShot(R_LauncherPos, m_forward);
 		G_EnemyBulletManager().MissileShot(L_LauncherPos, m_forward);
+		//G_EnemyBulletManager().MissileShot(R_LauncherPos, m_forward);
+		//G_EnemyBulletManager().MissileShot(L_LauncherPos, m_forward);
 		bulletcount++;
 	}
 	else {
 		bulletcount++;
-		if (bulletcount >= 50) {
+		if (bulletcount >= 30) {
 			bulletcount = 0;
 		}
 	}
@@ -248,9 +220,9 @@ void EnemyBoss_Launcher::RotateShot()
 			count++;
 		}
 	}
-	else if((rot_sum <= -0.1f) || (rot_sum >= 0.1f)){
+	else if((rot_sum <= -2.0f) || (rot_sum >= 2.0f)){
 		//‰¡ˆÚ“®B
-		m_moveSpeed = MoveVector * b_move*200.0f;
+		m_moveSpeed = MoveVector * b_move*400.0f;
 		CVector3 nextmove = m_position + m_moveSpeed;
 		if ((nextmove.x > E_PosR.x) || (nextmove.x < E_PosL.x)) {
 			b_move *= -1.0f;
@@ -264,7 +236,7 @@ void EnemyBoss_Launcher::RotateShot()
 		count = 0;
 		bulletcount = 0;
 		rot_sum = 0;
-		rot = 1.0f;
+		rot = 3.0f;
 		b_move = -1.0f;
 		attack = move;
 	}

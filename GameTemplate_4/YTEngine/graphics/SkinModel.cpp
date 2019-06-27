@@ -87,7 +87,7 @@ namespace YTEngine {
 	//ディレクションライトの初期化。
 	void SkinModel::InitDirectionLight()
 	{
-		float right = 0.6f;
+		float right = 0.7f;
 		m_light.directionLight.direction[0] = { 1.0f, 0.0f, 0.0f, 0.0f };
 		m_light.directionLight.color[0] = { right, right, right, 1.0f };
 

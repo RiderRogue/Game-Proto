@@ -141,7 +141,7 @@ namespace YTEngine {
 		//速度から10フレーム先での移動量を求める。オイラー積分。
 		CVector3 addPos = moveSpeed;
 		float speed = addPos.Length();
-		addPos *= 3.0f;//10フレーム。
+		addPos *= 10.0f;//10フレーム。
 		nextPosition += addPos;
 		
 		CVector3 originalXZDir = addPos;

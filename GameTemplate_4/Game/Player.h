@@ -2,6 +2,7 @@
 /*!
 * @brief	プレイヤー。
 */
+#include "graphics/animation/AnimationClip.h"
 #include "character/CharacterController.h"
 #include "Physics/CollisionAttr.h"
 #include "sound/SoundEngine.h"

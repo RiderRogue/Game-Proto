@@ -1,7 +1,7 @@
 #pragma once
 using namespace YTEngine;
 #include "Level.h"
-
+#include "Player.h"
 class MainGame : public IGameObject
 {
 public:
@@ -17,6 +17,7 @@ public:
 		Player_desFlag = true;
 	}
 private:
+	Player * player;
 	Level * level;
 	SkinModel m_model;
 	std::vector<CVector3>FlyEnemylist;

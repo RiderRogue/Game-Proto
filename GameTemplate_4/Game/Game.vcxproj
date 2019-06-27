@@ -106,6 +106,7 @@
     <ClCompile Include="GameBase\GameBase.cpp" />
     <ClCompile Include="Gamecamera.cpp" />
     <ClCompile Include="gauge.cpp" />
+    <ClCompile Include="GroundingLauncher.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Missile.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="GameBase\GameBase.h" />
     <ClInclude Include="Gamecamera.h" />
     <ClInclude Include="gauge.h" />
+    <ClInclude Include="GroundingLauncher.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Missile.h" />
     <ClInclude Include="Player.h" />
@@ -158,6 +160,7 @@
     <MeshContentTask Include="Assets\modelData\EnemyBullet.FBX" />
     <MeshContentTask Include="Assets\modelData\EnemyMissile.FBX" />
     <MeshContentTask Include="Assets\modelData\FlyEnemy.FBX" />
+    <MeshContentTask Include="Assets\modelData\GroundingLauncher.FBX" />
     <MeshContentTask Include="Assets\modelData\Heliport.FBX" />
     <MeshContentTask Include="Assets\modelData\Heliport_bill.FBX" />
     <MeshContentTask Include="Assets\modelData\hole.FBX" />
@@ -190,6 +193,12 @@
     <MeshContentTask Include="Assets\modelData\wall.FBX" />
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="Assets\animData\LauncherHatch_Close.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\LauncherHatch_Open.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
     <None Include="Assets\level\level01.tkl" />
     <None Include="Assets\level\level01_proto.tkl" />
     <None Include="Assets\level\level01_proto02.tkl" />

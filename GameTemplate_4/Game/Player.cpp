@@ -82,6 +82,7 @@ bool Player::Start()
 	m_se[2].Init(L"Assets/sound/landing.wav");
 	m_movese.Init(L"Assets/sound/move.wav");
 	m_Jumpse.Init(L"Assets/sound/JumpSE.wav");
+	Bullet_vector = m_forward;
 	return true;
 }
 
@@ -136,7 +137,7 @@ void Player::Update()
 	qBias.SetRotationDeg(CVector3::AxisY(), camera_rot_angle *camera_rot_speed);
 	m_rotation.Multiply(qBias);
 
-	Bullet_vector = m_forward;
+	
 
 	if (m_charaCon.IsOnGround()) {
 		//地面についた。
@@ -239,26 +240,15 @@ void Player::Bullet_Missile_Controller()
 {
 	//ミサイル発射ボタンが押されていたらtrueにする。
 	static bool M_Lockonflag = false;
-
-	/*Bulletangle += g_pad[0].GetRStickYF()*0.18f;
-	if (Bulletangle >= 1.0f) {
-		Bulletangle = 1.0f;
+	float kaku_proto = Camera_vector.Dot(m_forward);
+	if (kaku_proto >= 1.0f) {
+		kaku_proto = 1.0f;
 	}
-	if (Bulletangle <= -1.0f) {
-		Bulletangle = -1.0f;
+	if (kaku_proto <= -1.0f) {
+		kaku_proto = -1.0f;
 	}
-
-
-	CQuaternion qBullet = CQuaternion::Identity();
-	if (Bulletangle >= 0.0f) {
-		qBullet.SetRotationDeg(m_rite, -(Bulletangle*30.0f));
-	}
-	else {
-		qBullet.SetRotationDeg(m_rite, -(Bulletangle*26.0f));
-	}
-	qBullet.Multiply(Bullet_vector);*/
-
-	float kaku = acosf(Camera_vector.Dot(m_forward));//２つのべクトルの内積のアークコサインを求める。(ラジアン)
+	float kaku = acosf(kaku_proto);//２つのべクトルの内積のアークコサインを求める。(ラジアン)
+	//ここで非数がでている。直す必要あり。
 	float degree = CMath::RadToDeg(kaku);
 	CQuaternion qBullet = CQuaternion::Identity();
 
@@ -271,12 +261,24 @@ void Player::Bullet_Missile_Controller()
 	
 	qBullet.Multiply(Bullet_vector);
 
+	static int bullet = 0;
+	static int b_cnt = 0;
+	if (g_pad[0].IsTrigger(enButtonB)) {
+		bullet++;
+		if (bullet >= 2) {
+			bullet = 0;
+		}
+	}
 	//射撃ボタンが押されているか判定。
 	if (g_pad[0].IsPress(enButtonRB2))
 	{
 		//射撃処理。
-		//G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
-		G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
+		if (bullet == 0) {
+			G_Player_BulletManager().bulletShot(m_position, Bullet_vector);
+		}
+		else {
+			G_Player_BulletManager().BlackholeShot(m_position, Bullet_vector);
+		}
 	}
 
 	static int expl = 0;//長押しで全て起爆。
@@ -358,18 +360,21 @@ void Player::Player_Jump()
 	if ((g_pad[0].IsPress(enButtonA))&&(EnergyOutFlag==false)) {
 		//ジャンプする。
 		if (m_moveSpeed.y < 0.0f) {
-			m_moveSpeed.y += 350.0f;
+			m_moveSpeed.y += 550.0f;
 		}
 
 		//LB1ボタンを押して加速しているとき
 		if ((g_pad[0].IsPress(enButtonLB1)) && (EnergyOutFlag == false))
 		{
-			m_moveSpeed.y += 150.0f;
+			m_moveSpeed.y += 250.0f;
 		}
 		else {
-			m_moveSpeed.y += 50.0f;	//上方向に速度を設定して、
+			m_moveSpeed.y += 200.0f;	//上方向に速度を設定して、
 		}
 		
+		if (m_charaCon.IsOnGround()) {
+			m_moveSpeed.y += 850.0f;
+		}
 		m_charaCon.Jump();		//キャラクターコントローラーにジャンプしたことを通知する。
 		Energy -= 5.0f;  //エナジー消費
 		JumpFlag = true;  //ジャンプボタンが押された
@@ -377,7 +382,7 @@ void Player::Player_Jump()
 	}
 	else {
 		//重力
-		m_moveSpeed.y -= 200.0f;
+		m_moveSpeed.y -= 400.0f;
 		JumpFlag = false;
 		m_Jumpse.Stop();
 	}
