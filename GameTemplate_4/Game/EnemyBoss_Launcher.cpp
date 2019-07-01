@@ -195,7 +195,7 @@ void EnemyBoss_Launcher::RotateShot()
 	}
 	else {
 		bulletcount++;
-		if (bulletcount >= 30) {
+		if (bulletcount >= 60) {
 			bulletcount = 0;
 		}
 	}

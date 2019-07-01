@@ -37,7 +37,7 @@ bool Player::Start()
 	Energy = Energy_MAX;
 
 	//cmoファイルの読み込み。
-	m_model.Init(L"Assets/modelData/Player_Robo.cmo");
+	m_model.Init(L"Assets/modelData/Player_Robo_1.cmo");
 	mRot.MakeRotationFromQuaternion(m_rotation);
 	m_forward.x = mRot.m[2][0];
 	m_forward.y = mRot.m[2][1];
@@ -83,6 +83,19 @@ bool Player::Start()
 	m_movese.Init(L"Assets/sound/move.wav");
 	m_Jumpse.Init(L"Assets/sound/JumpSE.wav");
 	Bullet_vector = m_forward;
+
+	//P_AnimationClips[walk].Load(L"Assets/animData/Player_walk_1.tka");
+	P_AnimationClips[idle].Load(L"Assets/animData/Player_idle_1.tka");
+
+	//P_AnimationClips[walk].SetLoopFlag(true);
+	P_AnimationClips[idle].SetLoopFlag(true);
+	P_Animation.Init(
+		m_model,
+		P_AnimationClips,
+		Animnum
+	);
+	//P_Animation.Play(idle);
+	P_Animation.Update(1.0f/30.0f);
 	return true;
 }
 
@@ -143,6 +156,14 @@ void Player::Update()
 		//地面についた。
 		m_moveSpeed.y = 0.0f;
 	}
+	//動いているか？
+	if ((m_moveSpeed.x==0.0f)&&(m_moveSpeed.z == 0.0f)) 
+	{
+		P_Animation.Play(idle, 0.25);
+	}
+	else {
+		//P_Animation.Play(walk,0.25);
+	}
 	Player_Jump();
 	//HP管理。
 	HPcontrol();
@@ -164,7 +185,7 @@ void Player::Update()
 	);
 
 	targetSight.Update(m_targetSight_position, CQuaternion::Identity(), { 0.5f,0.5f,1.0f });
-
+	P_Animation.Update(1.0f / 30.0f);
 	/*if (player_desflag == true) {
 		FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
 	}*/
@@ -336,11 +357,9 @@ void Player::Energycontrol()
 
 	//加速もジャンプもしていないときはエナジーを回復する。
 	if ((MoveFlag == false) && (JumpFlag == false)){
-		if (Energy<Energy_MAX) {
-			if (m_charaCon.IsOnGround()) {
-				//接地時にエナジー回復
-				Energy += 5.0f;
-			}
+		if (Energy < Energy_MAX) {
+			//接地時にエナジー回復
+			Energy += 5.0f;
 		}
 		else {
 			Energy = Energy_MAX;

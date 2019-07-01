@@ -33,7 +33,7 @@
         <Content ID="7" RefID="7" />
       </Contents>
     </Pane>
-    <Pane ID="2" DockState="DockRight" ActiveContent="2">
+    <Pane ID="2" DockState="DockRight" ActiveContent="7">
       <Contents Count="9">
         <Content ID="0" RefID="10" />
         <Content ID="1" RefID="8" />

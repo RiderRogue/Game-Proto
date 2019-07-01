@@ -15,6 +15,8 @@ public:
 	virtual bool Getdesflag() {
 		return desflag;
 	}
+	//敵弾との当たり判定。
+	virtual bool HitE_bullet(CVector3 b_pos);
 private:
 	CVector3 m_position;
 	CVector3 m_forward;
@@ -66,6 +68,8 @@ public:
 	virtual bool Getdesflag() {
 		return desflag;
 	}
+	//敵弾との当たり判定。
+	virtual bool HitE_bullet(CVector3 b_pos);
 
 	CVector3 AbsorbEnemyBullet(CVector3 e_bullet);
 private:
@@ -192,6 +196,8 @@ public:
 	void erasebullet();
 	//不要なプレイヤーの弾の全削除。
 	void erasebullet_All();
+	//敵弾との当たり判定。
+	bool E_Bullet_toHit(CVector3 b_pos);
 private:
 	static const int Player_Missile_NUM = 10;      //ミサイルの配列の数。	
 	int count = 0;

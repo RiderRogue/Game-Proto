@@ -4,6 +4,7 @@
 #include "Player_BulletManager.h"
 #include "EnemyBulletManager.h"
 #include "GroundingLauncher.h"
+#include "FlyEnemy.h"
 //#include "GameBase/GameBase.h"
 
 EnemyManager::EnemyManager()
@@ -55,6 +56,13 @@ void EnemyManager::spawnGL(CVector3 position)
 	EnemyList.push_back(enemy);
 }
 
+void EnemyManager::spawnFly(CVector3 position)
+{
+	Enemy* enemy;
+	enemy = NewGO<FlyEnemy>(0);
+	enemy->SetPosition(position);
+	EnemyList.push_back(enemy);
+}
 void EnemyManager::Deleteenemy()
 {
 	for (std::list<Enemy*>::iterator itr = EnemyList.begin(); itr != EnemyList.end(); ) {

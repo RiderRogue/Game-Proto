@@ -19,6 +19,7 @@ public:
 	*/
 	void spawnenemy(CVector3 position);
 	void spawnGL(CVector3 position);
+	void spawnFly(CVector3 position);
 	/*!
 	*@brief	EnemyManagerインスタンスの取得。
 	*/

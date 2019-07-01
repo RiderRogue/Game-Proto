@@ -245,5 +245,12 @@ private:
 	bool player_rotationFlag = true;        //プレイヤーが回転するかを判定するフラグ。trueで回転。	  
 	bool player_desflag = false;
 
+	enum AnimClip {//各アニメーションのクリップ。
+		//walk,       //歩く
+		idle,      //待機
+		Animnum           //AnimationClipの総数
+	};
+	Animation P_Animation;				//アニメーション。
+	AnimationClip P_AnimationClips[Animnum];	//アニメーションクリップ。
 };
 

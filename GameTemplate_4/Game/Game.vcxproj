@@ -103,6 +103,7 @@
     <ClCompile Include="EnemyBoss_Launcher.cpp" />
     <ClCompile Include="EnemyBulletManager.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="FlyEnemy.cpp" />
     <ClCompile Include="GameBase\GameBase.cpp" />
     <ClCompile Include="Gamecamera.cpp" />
     <ClCompile Include="gauge.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="EnemyBoss_Launcher.h" />
     <ClInclude Include="EnemyBulletManager.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="FlyEnemy.h" />
     <ClInclude Include="GameBase\GameBase.h" />
     <ClInclude Include="Gamecamera.h" />
     <ClInclude Include="gauge.h" />
@@ -168,6 +170,7 @@
     <MeshContentTask Include="Assets\modelData\level_proto.fbx" />
     <MeshContentTask Include="Assets\modelData\Mine.FBX" />
     <MeshContentTask Include="Assets\modelData\Player_Robo.FBX" />
+    <MeshContentTask Include="Assets\modelData\Player_Robo_1.FBX" />
     <MeshContentTask Include="Assets\modelData\Plaza.FBX" />
     <MeshContentTask Include="Assets\modelData\road.FBX" />
     <MeshContentTask Include="Assets\modelData\road_curve90.FBX" />
@@ -197,6 +200,15 @@
       <FileType>Document</FileType>
     </CustomBuild>
     <CustomBuild Include="Assets\animData\LauncherHatch_Open.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_walk.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_idle.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_idle_1.tka">
       <FileType>Document</FileType>
     </CustomBuild>
     <None Include="Assets\level\level01.tkl" />

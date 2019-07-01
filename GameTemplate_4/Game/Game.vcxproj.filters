@@ -45,6 +45,7 @@
     <ClCompile Include="Stage_03.cpp" />
     <ClCompile Include="EnemyBoss_Launcher.cpp" />
     <ClCompile Include="GroundingLauncher.cpp" />
+    <ClCompile Include="FlyEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h" />
@@ -73,6 +74,7 @@
     <ClInclude Include="Stage_03.h" />
     <ClInclude Include="EnemyBoss_Launcher.h" />
     <ClInclude Include="GroundingLauncher.h" />
+    <ClInclude Include="FlyEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <MeshContentTask Include="Assets\modelData\unityChan.fbx">
@@ -122,6 +124,7 @@
     <MeshContentTask Include="Assets\modelData\EnemyBoss.FBX" />
     <MeshContentTask Include="Assets\modelData\EnemyMissile.FBX" />
     <MeshContentTask Include="Assets\modelData\GroundingLauncher.FBX" />
+    <MeshContentTask Include="Assets\modelData\Player_Robo_1.FBX" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\level\stage_01.tkl">
@@ -163,5 +166,8 @@
     <CustomBuild Include="Assets\sound\JumpSE.wav" />
     <CustomBuild Include="Assets\animData\LauncherHatch_Close.tka" />
     <CustomBuild Include="Assets\animData\LauncherHatch_Open.tka" />
+    <CustomBuild Include="Assets\animData\Player_walk.tka" />
+    <CustomBuild Include="Assets\animData\Player_idle.tka" />
+    <CustomBuild Include="Assets\animData\Player_idle_1.tka" />
   </ItemGroup>
 </Project>

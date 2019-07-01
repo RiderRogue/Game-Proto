@@ -41,6 +41,8 @@ void Enemy_BulletState::bulletmove(CVector3 P_pos) {
 	m_model.UpdateWorldMatrix(m_position, CQuaternion::Identity(), CVector3::One());
 	lengthcount += 1;
 
+	//自機弾との当たり判定。
+	desflag = G_Player_BulletManager().E_Bullet_toHit(m_position);
 	if (m_bulletCon.GetE_bullethit() == true) {
 		//プレイヤーに衝突した際に、死亡フラグをあげる。
 		hitflag = true;
@@ -54,6 +56,7 @@ void Enemy_BulletState::bulletmove(CVector3 P_pos) {
 		//一定距離進んだ際に、死亡フラグをあげる。
 		desflag = true;
 	}
+	
 }
 
 void Enemy_BulletState::Draw() {
@@ -67,8 +70,6 @@ void Enemy_BulletState::Draw() {
 
 void Enemy_MissileState::Init(CVector3 eposition, CVector3 eforward) {
 	m_position = eposition;
-	//m_forward = eforward;
-	//m_position += eforward * 90.0f;
 	m_position.y += 10.0f;
 	//敵弾の半径。
 	float radius = 15.0f;
@@ -183,8 +184,8 @@ void Enemy_MissileState::bulletmove(CVector3 P_pos, Effekseer::Effect* m_smokeEf
 	if (lengthcount == 1) {
 		m_smokeEffectHandle = G_EffekseerManager().Play(m_smokeEffect, m_position);
 	}
-	G_EffekseerManager().SetEffectposition(m_smokeEffectHandle, m_position);
-
+	//自機弾との当たり判定。
+	desflag = G_Player_BulletManager().E_Bullet_toHit(m_position);
 	if (m_bulletCon.GetE_bullethit() == true) {
 		//プレイヤーに衝突した際に、死亡フラグをあげる。
 		hitflag = true;
@@ -198,12 +199,16 @@ void Enemy_MissileState::bulletmove(CVector3 P_pos, Effekseer::Effect* m_smokeEf
 		//一定距離進んだ際に、死亡フラグをあげる。
 		desflag = true;
 	}
+	if (desflag == true) {
+		G_EffekseerManager().StopEffect(m_smokeEffectHandle);
+	}
+	else {
+		G_EffekseerManager().SetEffectposition(m_smokeEffectHandle, m_position);
+	}
 }
 
 void Enemy_VLS::Init(CVector3 eposition, CVector3 eforward) {
 	m_position = eposition;
-	//m_forward = eforward;
-	//m_position += eforward * 90.0f;
 	m_position.y += 10.0f;
 	//敵弾の半径。
 	float radius = 15.0f;
@@ -327,7 +332,9 @@ void Enemy_VLS::bulletmove(CVector3 P_pos, Effekseer::Effect* m_smokeEffect) {
 	if (lengthcount == 1) {
 		m_smokeEffectHandle = G_EffekseerManager().Play(m_smokeEffect, m_position);
 	}
-	G_EffekseerManager().SetEffectposition(m_smokeEffectHandle,m_position);
+	
+	//自機弾との当たり判定。
+	desflag = G_Player_BulletManager().E_Bullet_toHit(m_position);
 	if (m_bulletCon.GetE_bullethit() == true) {
 		//プレイヤーに衝突した際に、死亡フラグをあげる。
 		hitflag = true;
@@ -341,8 +348,13 @@ void Enemy_VLS::bulletmove(CVector3 P_pos, Effekseer::Effect* m_smokeEffect) {
 		//一定距離進んだ際に、死亡フラグをあげる。
 		desflag = true;
 	}
-
 	
+	if (desflag == true){
+		G_EffekseerManager().StopEffect(m_smokeEffectHandle);
+	}
+	else {
+		G_EffekseerManager().SetEffectposition(m_smokeEffectHandle, m_position);
+	}
 }
 EnemyBulletManager::EnemyBulletManager()
 {

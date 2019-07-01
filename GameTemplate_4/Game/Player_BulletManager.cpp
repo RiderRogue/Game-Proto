@@ -56,6 +56,20 @@ void Player_BulletState::Hitbullet(Enemy* enemy)
 		enemy->enemyDamage(damage);
 	}
 }
+
+bool Player_BulletState::HitE_bullet(CVector3 b_pos)
+{
+	CVector3 v = m_position - b_pos;
+	float len = v.Length();//í∑Ç≥
+						   //ìGÇ∆è’ìÀÇµÇΩ(ãóó£Ç™60.0fà»â∫Ç»ÇÁ)ÇÁ
+	if (len <= 60.0f) {
+		//ìñÇΩÇ¡ÇΩíeÇÃéÄñSÉtÉâÉOÇÇ†Ç∞ÇÈÅB
+		desflag = true;
+		//ìGÇ∆íeÇÃãóó£Çë™ÇËÅAìñÇΩÇ¡ÇƒÇ¢ÇÍÇŒtrueÇï‘Ç∑ÅB
+		return true;
+	}
+	return false;
+}
 void Player_BulletState::Draw() {
 	m_model.Draw(
 		enRenderMode_Normal,
@@ -188,6 +202,17 @@ void Player_Blackhole::HitBlackhole(Enemy* enemy, Effekseer::Effect* m_blackhole
 		enemy->enemyDamage_Blackhole(BlackholeDamage, m_position);
 	}
 }
+bool Player_Blackhole::HitE_bullet(CVector3 b_pos)
+{
+	CVector3 v = m_position - b_pos;
+	float len = v.Length();//í∑Ç≥
+						   //ìGÇ∆è’ìÀÇµÇΩ(ãóó£Ç™60.0fà»â∫Ç»ÇÁ)ÇÁ
+	if (len <= 90.0f) {
+		//ìGÇ∆íeÇÃãóó£Çë™ÇËÅAìñÇΩÇ¡ÇƒÇ¢ÇÍÇŒtrueÇï‘Ç∑ÅB
+		return true;
+	}
+	return false;
+}
 void Player_Blackhole::Draw()
 {
 	if (explosion != true) {//ÉuÉâÉbÉNÉzÅ[ÉãÇ™ê∂ê¨Ç≥ÇÍÇƒÇ¢Ç»Ç©Ç¡ÇΩÇÁï`âÊÅB
@@ -207,7 +232,7 @@ CVector3 Player_Blackhole::AbsorbEnemyBullet(CVector3 e_bullet)
 	if ((explosion == true) && (len <= blackholeAbsorb)) {
 		//ãzé˚Ç∑ÇÈÅB
 		Absorb.Normalize();
-		Absorb *= 2000.0f;
+		Absorb *= 3300.0f;
 	}
 	else {
 		//ãzé˚Ç≥ÇÍÇ»Ç¢ÅB
@@ -419,6 +444,25 @@ CVector3 Player_BulletManager::Blackhole_EnemyBullet(CVector3 e_bullet)
 		Absorb =p_blackhole->AbsorbEnemyBullet(e_bullet);
 	}
 	return Absorb;
+}
+
+bool Player_BulletManager::E_Bullet_toHit(CVector3 b_pos)
+{
+	bool e_hit = false;
+	for (std::list<Player_BulletState*>::iterator itr = P_BulletList.begin(); itr != P_BulletList.end(); itr++) {
+		e_hit=(*itr)->HitE_bullet(b_pos);
+		if (e_hit == true) {
+			return e_hit;
+		}
+	}
+
+	for (Player_Blackhole* p_blackhole : P_BlackholeList) {
+		e_hit = p_blackhole->HitE_bullet(b_pos);
+		if (e_hit == true) {
+			return e_hit;
+		}
+	}
+	return e_hit;
 }
 
 void Player_BulletManager::missile_move(int missileNumber)

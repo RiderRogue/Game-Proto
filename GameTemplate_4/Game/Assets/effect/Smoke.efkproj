@@ -23,14 +23,15 @@
             <CommonValues>
               <MaxGeneration>
                 <Value>600</Value>
+                <Infinite>True</Infinite>
               </MaxGeneration>
               <LocationEffectType>1</LocationEffectType>
               <RotationEffectType>1</RotationEffectType>
               <ScaleEffectType>1</ScaleEffectType>
               <Life>
-                <Center>30</Center>
-                <Max>30</Max>
-                <Min>30</Min>
+                <Center>10</Center>
+                <Max>10</Max>
+                <Min>10</Min>
               </Life>
               <GenerationTime>
                 <Center>0.1</Center>
