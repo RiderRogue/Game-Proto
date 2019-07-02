@@ -84,17 +84,19 @@ bool Player::Start()
 	m_Jumpse.Init(L"Assets/sound/JumpSE.wav");
 	Bullet_vector = m_forward;
 
-	//P_AnimationClips[walk].Load(L"Assets/animData/Player_walk_1.tka");
+	P_AnimationClips[walk].Load(L"Assets/animData/Player_walk_1.tka");
 	P_AnimationClips[idle].Load(L"Assets/animData/Player_idle_1.tka");
+	P_AnimationClips[boost].Load(L"Assets/animData/Player_boost.tka");
 
-	//P_AnimationClips[walk].SetLoopFlag(true);
-	P_AnimationClips[idle].SetLoopFlag(true);
+	P_AnimationClips[walk].SetLoopFlag(true);
+	P_AnimationClips[idle].SetLoopFlag(false);
+	P_AnimationClips[boost].SetLoopFlag(false);
 	P_Animation.Init(
 		m_model,
 		P_AnimationClips,
 		Animnum
 	);
-	//P_Animation.Play(idle);
+	P_Animation.Play(idle);
 	P_Animation.Update(1.0f/30.0f);
 	return true;
 }
@@ -131,22 +133,7 @@ void Player::Update()
 	m_moveSpeed_side = lStick_x*2.0f;
 	//プレイヤーの前方向を計算
 
-	//回転
-	/*
-	プレイヤーの進行方向の角度をもとめるには、
-	スティックの入力方向の単位ベクトルとプレイヤーの前方の単位ベクトルの内積を求める。
-	*/
-	/*CVector3 moveAngle = camera_forward;
-	moveAngle.y = 0.0f;
-	float player_rot;
-	player_rot = moveAngle.Dot(m_forward);
-	if (camera_rot_angle>0.0f) {
-	player_rot = acos(player_rot);
-	}
-	else {
-	player_rot = -acos(player_rot);
-	}*/
-
+	
 	qBias.SetRotationDeg(CVector3::AxisY(), camera_rot_angle *camera_rot_speed);
 	m_rotation.Multiply(qBias);
 
@@ -156,14 +143,7 @@ void Player::Update()
 		//地面についた。
 		m_moveSpeed.y = 0.0f;
 	}
-	//動いているか？
-	if ((m_moveSpeed.x==0.0f)&&(m_moveSpeed.z == 0.0f)) 
-	{
-		P_Animation.Play(idle, 0.25);
-	}
-	else {
-		//P_Animation.Play(walk,0.25);
-	}
+	
 	Player_Jump();
 	//HP管理。
 	HPcontrol();
@@ -189,14 +169,7 @@ void Player::Update()
 	/*if (player_desflag == true) {
 		FindGO<GameBase>("GameBase")->ChangeScene(GameBase::GameBase_title);
 	}*/
-	//if (g_pad[0].IsTrigger(enButtonA)) {
-	//	//Aボタンが押されたらSEを鳴らす。
-	//	static int m_playSENo = 0;
-	//	m_se[m_playSENo].Play(false);
-	//	m_playSENo++;
-	//	m_playSENo = m_playSENo % 2;
-	//}
-	//viewport.Project
+	
 }
 
 void Player::MoveEffect()
@@ -220,6 +193,7 @@ void Player::MoveEffect()
 			movespeed = movespeed_QB;
 			Energy -= 20.0f;  //エナジー消費
 			boostTime++;
+			
 		}
 		else {
 			//クイックブースト終了後は速度を下げる。
@@ -228,6 +202,7 @@ void Player::MoveEffect()
 				Energy -= 5.0f;  //エナジー消費
 			}
 			else {
+				//通常のブースト加速。
 				movespeed = movespeed_MAX;
 				Energy -= 5.0f;  //エナジー消費
 			}
@@ -240,6 +215,9 @@ void Player::MoveEffect()
 	else {
 		if (movespeed > movespeed_MIN) {
 			movespeed -= 90.0f;
+			if (movespeed<= movespeed_MIN) {
+				movespeed = movespeed_MIN;//一番遅い加速度にする。
+			}
 		}
 		m_model.DirectionLight_ReturnRed(4.0f);
 		MoveFlag = false;
@@ -249,11 +227,21 @@ void Player::MoveEffect()
 	lStick_x = g_pad[0].GetLStickXF()*movespeed;
 	lStick_y = g_pad[0].GetLStickYF()*movespeed;
 
+	//進んでないときは
 	if ((lStick_x == 0.0f) && (lStick_y == 0.0f)) {
 		m_movese.Stop();
+		P_Animation.Play(idle, 0.25);
 	}
-	else {		
-		m_movese.Play(true);
+	else {	
+		if(MoveFlag==true){
+			P_Animation.Play(boost, 0.25);//ブーストアニメーション。
+		}
+		else {//接地時に足を動かす。
+			if (m_charaCon.IsOnGround()) {
+				P_Animation.Play(walk, 0.25);
+				m_movese.Play(true);
+			}
+		}		
 	}
 }
 

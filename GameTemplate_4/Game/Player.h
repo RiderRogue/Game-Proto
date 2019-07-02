@@ -246,8 +246,9 @@ private:
 	bool player_desflag = false;
 
 	enum AnimClip {//各アニメーションのクリップ。
-		//walk,       //歩く
+		walk,       //歩く
 		idle,      //待機
+		boost,     //ブースト
 		Animnum           //AnimationClipの総数
 	};
 	Animation P_Animation;				//アニメーション。

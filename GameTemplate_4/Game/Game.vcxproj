@@ -211,6 +211,12 @@
     <CustomBuild Include="Assets\animData\Player_idle_1.tka">
       <FileType>Document</FileType>
     </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_boost.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_walk_1.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
     <None Include="Assets\level\level01.tkl" />
     <None Include="Assets\level\level01_proto.tkl" />
     <None Include="Assets\level\level01_proto02.tkl" />

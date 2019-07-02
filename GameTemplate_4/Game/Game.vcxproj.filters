@@ -138,6 +138,7 @@
     <None Include="Assets\level\level01_proto02.tkl" />
     <None Include="Assets\level\stage_03.tkl" />
     <None Include="Assets\level\stage_00.tkl" />
+    <None Include="Assets\animData\Player_walk_1.tka" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\modelData\utc_nomal.tga" />
@@ -169,5 +170,6 @@
     <CustomBuild Include="Assets\animData\Player_walk.tka" />
     <CustomBuild Include="Assets\animData\Player_idle.tka" />
     <CustomBuild Include="Assets\animData\Player_idle_1.tka" />
+    <CustomBuild Include="Assets\animData\Player_boost.tka" />
   </ItemGroup>
 </Project>
