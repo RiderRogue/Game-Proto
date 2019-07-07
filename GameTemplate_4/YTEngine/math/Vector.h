@@ -175,7 +175,15 @@ namespace YTEngine {
 		{
 			DirectX::XMVECTOR xmv0 = DirectX::XMLoadFloat3(&vec);
 			DirectX::XMVECTOR xmv1 = DirectX::XMLoadFloat3(&_v.vec);
-			return DirectX::XMVector3Dot(xmv0, xmv1).m128_f32[0];
+			float dot=DirectX::XMVector3Dot(xmv0, xmv1).m128_f32[0];
+			//バグ防止のラップ
+			if (dot >= 1.0f) {
+				dot = 1.0f;
+			}
+			else if (dot <= -1.0f) {
+				dot = -1.0f;
+			}
+			return dot;
 		}
 		/*!
 		* @brief	外積。

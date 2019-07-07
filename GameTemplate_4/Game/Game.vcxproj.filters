@@ -138,7 +138,6 @@
     <None Include="Assets\level\level01_proto02.tkl" />
     <None Include="Assets\level\stage_03.tkl" />
     <None Include="Assets\level\stage_00.tkl" />
-    <None Include="Assets\animData\Player_walk_1.tka" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\modelData\utc_nomal.tga" />
@@ -171,5 +170,20 @@
     <CustomBuild Include="Assets\animData\Player_idle.tka" />
     <CustomBuild Include="Assets\animData\Player_idle_1.tka" />
     <CustomBuild Include="Assets\animData\Player_boost.tka" />
+    <CustomBuild Include="Assets\animData\Player_walk_1.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyL.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyR.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyL_Jast.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyR_Jast.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyL_back.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyL_forward.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyR_back.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyR_forward.tka" />
+    <CustomBuild Include="Assets\animData\Player_fly_back.tka" />
+    <CustomBuild Include="Assets\animData\Player_fly_forward.tka" />
+    <CustomBuild Include="Assets\animData\Player_fly_backBoost.tka" />
+    <CustomBuild Include="Assets\animData\Player_fly_forwardBoost.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyL_JastBoost.tka" />
+    <CustomBuild Include="Assets\animData\Player_flyR_JastBoost.tka" />
   </ItemGroup>
 </Project>

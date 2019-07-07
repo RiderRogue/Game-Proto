@@ -168,9 +168,17 @@ public:
 	void Energycontrol();
 
 	/*
+	*@brief プレイヤーのアニメーションの管理。
+	*/
+	void PlayerAnim();
+	/*
 	*@brief プレイヤーのHPの管理。
 	*/
 	void HPcontrol();
+	/*
+	*@brief プレイヤーの前方と進行方向の角度を調べる。
+	*/
+	float P_Vector_angle();
 
 	void Damage(float damage) {
 		HP -= damage;
@@ -249,7 +257,19 @@ private:
 		walk,       //歩く
 		idle,      //待機
 		boost,     //ブースト
-		Animnum           //AnimationClipの総数
+		fly_forward,
+		fly_back,
+		flyR_forward,    //空中右前移動
+		flyR_just,       //空中右移動
+		flyR_back,       //空中右後移動
+		flyL_forward,    //空中左前移動
+		flyL_just,       //空中左移動
+		flyL_back,       //空中左後移動
+		fly_forwardBoost,
+		fly_backBoost,
+		flyR_justBoost,
+		flyL_justBoost,
+		Animnum          //AnimationClipの総数
 	};
 	Animation P_Animation;				//アニメーション。
 	AnimationClip P_AnimationClips[Animnum];	//アニメーションクリップ。

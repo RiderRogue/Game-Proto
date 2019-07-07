@@ -87,10 +87,36 @@ bool Player::Start()
 	P_AnimationClips[walk].Load(L"Assets/animData/Player_walk_1.tka");
 	P_AnimationClips[idle].Load(L"Assets/animData/Player_idle_1.tka");
 	P_AnimationClips[boost].Load(L"Assets/animData/Player_boost.tka");
+	P_AnimationClips[fly_forward].Load(L"Assets/animData/Player_fly_forward.tka");
+	P_AnimationClips[fly_back].Load(L"Assets/animData/Player_fly_back.tka");
+	P_AnimationClips[flyR_forward].Load(L"Assets/animData/Player_flyR_forward.tka");
+	P_AnimationClips[flyR_just].Load(L"Assets/animData/Player_flyR_Jast.tka");
+	P_AnimationClips[flyR_back].Load(L"Assets/animData/Player_flyR_back.tka");
+	P_AnimationClips[flyL_forward].Load(L"Assets/animData/Player_flyL_forward.tka");
+	P_AnimationClips[flyL_just].Load(L"Assets/animData/Player_flyL_Jast.tka");
+	P_AnimationClips[flyL_back].Load(L"Assets/animData/Player_flyL_back.tka");
+
+	P_AnimationClips[fly_forwardBoost].Load(L"Assets/animData/Player_fly_forwardBoost.tka");
+	P_AnimationClips[fly_backBoost].Load(L"Assets/animData/Player_fly_backBoost.tka");
+	P_AnimationClips[flyR_justBoost].Load(L"Assets/animData/Player_flyR_JastBoost.tka");
+	P_AnimationClips[flyL_justBoost].Load(L"Assets/animData/Player_flyL_JastBoost.tka");
 
 	P_AnimationClips[walk].SetLoopFlag(true);
-	P_AnimationClips[idle].SetLoopFlag(false);
+	P_AnimationClips[idle].SetLoopFlag(true);
 	P_AnimationClips[boost].SetLoopFlag(false);
+	P_AnimationClips[fly_forward].SetLoopFlag(false);
+	P_AnimationClips[fly_back].SetLoopFlag(false);
+	P_AnimationClips[flyR_forward].SetLoopFlag(false);
+	P_AnimationClips[flyR_just].SetLoopFlag(false);
+	P_AnimationClips[flyR_back].SetLoopFlag(false);
+	P_AnimationClips[flyL_forward].SetLoopFlag(false);
+	P_AnimationClips[flyL_just].SetLoopFlag(false);
+	P_AnimationClips[flyL_back].SetLoopFlag(false);
+
+	P_AnimationClips[fly_forwardBoost].SetLoopFlag(false);
+	P_AnimationClips[fly_backBoost].SetLoopFlag(false);
+	P_AnimationClips[flyR_justBoost].SetLoopFlag(false);
+	P_AnimationClips[flyL_justBoost].SetLoopFlag(false);
 	P_Animation.Init(
 		m_model,
 		P_AnimationClips,
@@ -155,6 +181,7 @@ void Player::Update()
 	m_position = m_charaCon.Execute(GameTime().GetFrameDeltaTime(), m_moveSpeed);//移動。
 	m_position_center = { m_position.x,m_position.y + (player_height / 2),m_position.z };
 
+	PlayerAnim();
 	 //ワールド行列の更新。
 	m_model.UpdateWorldMatrix(m_position, m_rotation, CVector3::One());
 
@@ -226,23 +253,6 @@ void Player::MoveEffect()
 	//左スティックの入力量を受け取る。
 	lStick_x = g_pad[0].GetLStickXF()*movespeed;
 	lStick_y = g_pad[0].GetLStickYF()*movespeed;
-
-	//進んでないときは
-	if ((lStick_x == 0.0f) && (lStick_y == 0.0f)) {
-		m_movese.Stop();
-		P_Animation.Play(idle, 0.25);
-	}
-	else {	
-		if(MoveFlag==true){
-			P_Animation.Play(boost, 0.25);//ブーストアニメーション。
-		}
-		else {//接地時に足を動かす。
-			if (m_charaCon.IsOnGround()) {
-				P_Animation.Play(walk, 0.25);
-				m_movese.Play(true);
-			}
-		}		
-	}
 }
 
 void Player::Bullet_Missile_Controller()
@@ -357,7 +367,115 @@ void Player::Energycontrol()
 	m_gauge->Energy_meter(Energy, Energy_MAX);
 }
 
+float Player::P_Vector_angle()
+{
+	static CVector3 move;
+	static float moveangle;
+	move = m_moveSpeed;
+	move.y = m_forward.y;
+	move.Normalize();
+	moveangle = CMath::RadToDeg(acos(move.Dot(m_forward)));
+	CVector3 rotAxis;
+	rotAxis.Cross(m_forward, move);
+	rotAxis.Normalize();
+	if (rotAxis.y < 0.0f) {
+		moveangle = 360.0f - moveangle;
+	}
 
+	return moveangle;
+}
+void Player::PlayerAnim()
+{
+	//進んでないときは
+	if ((lStick_x == 0.0f) && (lStick_y == 0.0f)) {
+		m_movese.Stop();
+		P_Animation.Play(idle, 0.25);
+	}
+	else {
+		//前方に対する移動方向を取得。
+		float angle = P_Vector_angle();
+		if (MoveFlag == true) {//ブースト
+			if (m_charaCon.IsOnGround()) {
+				P_Animation.Play(boost, 0.5);//ブーストアニメーション。
+				m_movese.Play(true);
+			}
+			else {//空中ブースト
+				if ((angle < 20.0f) || (angle >= 340.0f)) {
+					//前
+					P_Animation.Play(fly_forwardBoost, 0.25);
+				}
+				else if ((angle >= 20.0f) && (angle < 70.0f)) {
+					//右前
+					P_Animation.Play(flyR_forward, 0.25);
+				}
+				else if ((angle >= 70.0f) && (angle < 110.0f)) {
+					//右
+					P_Animation.Play(flyR_justBoost, 0.25);
+				}
+				else if ((angle >= 110.0f) && (angle < 160.0f)) {
+					//右後
+					P_Animation.Play(flyR_back, 0.25);
+				}
+				else if ((angle >= 160.0f) && (angle < 200.0f)) {
+					//後
+					P_Animation.Play(fly_backBoost, 0.25);
+				}
+				else if ((angle >= 200.0f) && (angle < 250.0f)) {
+					//左後
+					P_Animation.Play(flyL_back, 0.25);
+				}
+				else if ((angle >= 250.0f) && (angle < 290.0f)) {
+					//左
+					P_Animation.Play(flyL_justBoost, 0.25);
+				}
+				else if ((angle >= 290.0f) && (angle < 340.0f)) {
+					//左前
+					P_Animation.Play(flyL_forward, 0.25);
+				}
+			}
+		}
+		else {//接地時に足を動かす。
+			if (m_charaCon.IsOnGround()) {
+				P_Animation.Play(walk, 0.25);
+				m_movese.Play(true);
+			}
+			else {//空中時のアニメーション
+				if ((angle < 20.0f)||(angle >= 340.0f)) {
+					//前
+					P_Animation.Play(fly_forward, 0.25);
+				}
+				else if ((angle >= 20.0f) && (angle < 70.0f)) {
+					//右前
+					P_Animation.Play(flyR_forward, 0.25);
+				}
+				else if ((angle >= 70.0f) && (angle < 110.0f)) {
+					//右
+					P_Animation.Play(flyR_just, 0.25);
+				}
+				else if ((angle >= 110.0f) && (angle < 160.0f)) {
+					//右後
+					P_Animation.Play(flyR_back, 0.25);
+				}
+				else if ((angle >= 160.0f) && (angle < 200.0f)) {
+					//後
+					P_Animation.Play(fly_back, 0.25);
+				}
+				else if ((angle >= 200.0f) && (angle < 250.0f)) {
+					//左後
+					P_Animation.Play(flyL_back, 0.25);
+				}
+				else if ((angle >= 250.0f) && (angle < 290.0f)) {
+					//左
+					P_Animation.Play(flyL_just, 0.25);
+				}
+				else if ((angle >= 290.0f) && (angle < 340.0f)) {
+					//左前
+					P_Animation.Play(flyL_forward, 0.25);
+				}
+			}
+		}
+	}
+}
 void Player::Player_Jump()
 {
 	//飛行中かを格納する。

@@ -217,6 +217,48 @@
     <CustomBuild Include="Assets\animData\Player_walk_1.tka">
       <FileType>Document</FileType>
     </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyL.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyR.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyL_Jast.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyR_Jast.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyL_back.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyL_forward.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyR_back.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyR_forward.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_fly_back.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_fly_forward.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_fly_backBoost.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_fly_forwardBoost.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyL_JastBoost.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Assets\animData\Player_flyR_JastBoost.tka">
+      <FileType>Document</FileType>
+    </CustomBuild>
     <None Include="Assets\level\level01.tkl" />
     <None Include="Assets\level\level01_proto.tkl" />
     <None Include="Assets\level\level01_proto02.tkl" />
