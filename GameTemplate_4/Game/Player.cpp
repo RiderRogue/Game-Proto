@@ -83,10 +83,26 @@ bool Player::Start()
 	m_movese.Init(L"Assets/sound/move.wav");
 	m_Jumpse.Init(L"Assets/sound/JumpSE.wav");
 	Bullet_vector = m_forward;
-
-	P_AnimationClips[walk].Load(L"Assets/animData/Player_walk_1.tka");
 	P_AnimationClips[idle].Load(L"Assets/animData/Player_idle_1.tka");
-	P_AnimationClips[boost].Load(L"Assets/animData/Player_boost.tka");
+	//歩行アニメーション
+	P_AnimationClips[walk_forward].Load(L"Assets/animData/Player_walk_2.tka");
+	P_AnimationClips[walk_back].Load(L"Assets/animData/Player_fly_back.tka");
+	P_AnimationClips[walkR_forward].Load(L"Assets/animData/Player_walk_2R_forward.tka");
+	P_AnimationClips[walkR_just].Load(L"Assets/animData/Player_walk_2R_Jast.tka");
+	P_AnimationClips[walkR_back].Load(L"Assets/animData/Player_flyR_back.tka");
+	P_AnimationClips[walkL_forward].Load(L"Assets/animData/Player_walk_2L_forward.tka");
+	P_AnimationClips[walkL_just].Load(L"Assets/animData/Player_walk_2L_Jast.tka");
+	P_AnimationClips[walkL_back].Load(L"Assets/animData/Player_flyL_back.tka");
+	
+	P_AnimationClips[walk_forwardBoost].Load(L"Assets/animData/Player_boost.tka");
+	P_AnimationClips[walk_backBoost].Load(L"Assets/animData/Player_fly_backBoost.tka");
+	P_AnimationClips[walkR_forwardBoost].Load(L"Assets/animData/Player_flyR_forwardBoost.tka");
+	P_AnimationClips[walkR_justBoost].Load(L"Assets/animData/Player_flyR_JastBoost.tka");
+	P_AnimationClips[walkR_backBoost].Load(L"Assets/animData/Player_flyR_backBoost.tka");
+	P_AnimationClips[walkL_forwardBoost].Load(L"Assets/animData/Player_flyL_forwardBoost.tka");
+	P_AnimationClips[walkL_justBoost].Load(L"Assets/animData/Player_flyL_JastBoost.tka");
+	P_AnimationClips[walkL_backBoost].Load(L"Assets/animData/Player_flyL_backBoost.tka");
+	//飛行アニメーション
 	P_AnimationClips[fly_forward].Load(L"Assets/animData/Player_fly_forward.tka");
 	P_AnimationClips[fly_back].Load(L"Assets/animData/Player_fly_back.tka");
 	P_AnimationClips[flyR_forward].Load(L"Assets/animData/Player_flyR_forward.tka");
@@ -98,12 +114,33 @@ bool Player::Start()
 
 	P_AnimationClips[fly_forwardBoost].Load(L"Assets/animData/Player_fly_forwardBoost.tka");
 	P_AnimationClips[fly_backBoost].Load(L"Assets/animData/Player_fly_backBoost.tka");
+	P_AnimationClips[flyR_forwardBoost].Load(L"Assets/animData/Player_flyR_forwardBoost.tka");
 	P_AnimationClips[flyR_justBoost].Load(L"Assets/animData/Player_flyR_JastBoost.tka");
+	P_AnimationClips[flyR_backBoost].Load(L"Assets/animData/Player_flyR_backBoost.tka");
+	P_AnimationClips[flyL_forwardBoost].Load(L"Assets/animData/Player_flyL_forwardBoost.tka");
 	P_AnimationClips[flyL_justBoost].Load(L"Assets/animData/Player_flyL_JastBoost.tka");
+	P_AnimationClips[flyL_backBoost].Load(L"Assets/animData/Player_flyL_backBoost.tka");
 
-	P_AnimationClips[walk].SetLoopFlag(true);
 	P_AnimationClips[idle].SetLoopFlag(true);
-	P_AnimationClips[boost].SetLoopFlag(false);
+	//歩行アニメーション
+	P_AnimationClips[walk_forward].SetLoopFlag(true);
+	P_AnimationClips[walk_back].SetLoopFlag(true);
+	P_AnimationClips[walkR_forward].SetLoopFlag(true);
+	P_AnimationClips[walkR_just].SetLoopFlag(true);
+	P_AnimationClips[walkR_back].SetLoopFlag(true);
+	P_AnimationClips[walkL_forward].SetLoopFlag(true);
+	P_AnimationClips[walkL_just].SetLoopFlag(true);
+	P_AnimationClips[walkL_back].SetLoopFlag(true);
+	
+	P_AnimationClips[walk_forwardBoost].SetLoopFlag(false);
+	P_AnimationClips[walk_backBoost].SetLoopFlag(false);
+	P_AnimationClips[walkR_forwardBoost].SetLoopFlag(false);
+	P_AnimationClips[walkR_justBoost].SetLoopFlag(false);
+	P_AnimationClips[walkR_backBoost].SetLoopFlag(false);
+	P_AnimationClips[walkL_forwardBoost].SetLoopFlag(false);
+	P_AnimationClips[walkL_justBoost].SetLoopFlag(false);
+	P_AnimationClips[walkL_backBoost].SetLoopFlag(false);
+	//飛行アニメーション
 	P_AnimationClips[fly_forward].SetLoopFlag(false);
 	P_AnimationClips[fly_back].SetLoopFlag(false);
 	P_AnimationClips[flyR_forward].SetLoopFlag(false);
@@ -115,8 +152,12 @@ bool Player::Start()
 
 	P_AnimationClips[fly_forwardBoost].SetLoopFlag(false);
 	P_AnimationClips[fly_backBoost].SetLoopFlag(false);
+	P_AnimationClips[flyR_forwardBoost].SetLoopFlag(false);
 	P_AnimationClips[flyR_justBoost].SetLoopFlag(false);
+	P_AnimationClips[flyR_backBoost].SetLoopFlag(false);
+	P_AnimationClips[flyL_forwardBoost].SetLoopFlag(false);
 	P_AnimationClips[flyL_justBoost].SetLoopFlag(false);
+	P_AnimationClips[flyL_backBoost].SetLoopFlag(false);
 	P_Animation.Init(
 		m_model,
 		P_AnimationClips,
@@ -396,7 +437,39 @@ void Player::PlayerAnim()
 		float angle = P_Vector_angle();
 		if (MoveFlag == true) {//ブースト
 			if (m_charaCon.IsOnGround()) {
-				P_Animation.Play(boost, 0.5);//ブーストアニメーション。
+				//地上ブーストアニメーション。
+				if ((angle < 20.0f) || (angle >= 340.0f)) {
+					//前
+					P_Animation.Play(walk_forwardBoost, 0.25);
+				}
+				else if ((angle >= 20.0f) && (angle < 70.0f)) {
+					//右前
+					P_Animation.Play(walkR_forwardBoost, 0.25);
+				}
+				else if ((angle >= 70.0f) && (angle < 110.0f)) {
+					//右
+					P_Animation.Play(walkR_justBoost, 0.25);
+				}
+				else if ((angle >= 110.0f) && (angle < 160.0f)) {
+					//右後
+					P_Animation.Play(walkR_backBoost, 0.25);
+				}
+				else if ((angle >= 160.0f) && (angle < 200.0f)) {
+					//後
+					P_Animation.Play(walk_backBoost, 0.25);
+				}
+				else if ((angle >= 200.0f) && (angle < 250.0f)) {
+					//左後
+					P_Animation.Play(walkL_backBoost, 0.25);
+				}
+				else if ((angle >= 250.0f) && (angle < 290.0f)) {
+					//左
+					P_Animation.Play(walkL_justBoost, 0.25);
+				}
+				else if ((angle >= 290.0f) && (angle < 340.0f)) {
+					//左前
+					P_Animation.Play(walkL_forwardBoost, 0.25);
+				}
 				m_movese.Play(true);
 			}
 			else {//空中ブースト
@@ -406,7 +479,7 @@ void Player::PlayerAnim()
 				}
 				else if ((angle >= 20.0f) && (angle < 70.0f)) {
 					//右前
-					P_Animation.Play(flyR_forward, 0.25);
+					P_Animation.Play(flyR_forwardBoost, 0.25);
 				}
 				else if ((angle >= 70.0f) && (angle < 110.0f)) {
 					//右
@@ -414,7 +487,7 @@ void Player::PlayerAnim()
 				}
 				else if ((angle >= 110.0f) && (angle < 160.0f)) {
 					//右後
-					P_Animation.Play(flyR_back, 0.25);
+					P_Animation.Play(flyR_backBoost, 0.25);
 				}
 				else if ((angle >= 160.0f) && (angle < 200.0f)) {
 					//後
@@ -422,7 +495,7 @@ void Player::PlayerAnim()
 				}
 				else if ((angle >= 200.0f) && (angle < 250.0f)) {
 					//左後
-					P_Animation.Play(flyL_back, 0.25);
+					P_Animation.Play(flyL_backBoost, 0.25);
 				}
 				else if ((angle >= 250.0f) && (angle < 290.0f)) {
 					//左
@@ -430,13 +503,44 @@ void Player::PlayerAnim()
 				}
 				else if ((angle >= 290.0f) && (angle < 340.0f)) {
 					//左前
-					P_Animation.Play(flyL_forward, 0.25);
+					P_Animation.Play(flyL_forwardBoost, 0.25);
 				}
 			}
 		}
 		else {//接地時に足を動かす。
 			if (m_charaCon.IsOnGround()) {
-				P_Animation.Play(walk, 0.25);
+				if ((angle < 20.0f) || (angle >= 340.0f)) {
+					//前
+					P_Animation.Play(walk_forward, 0.25);
+				}
+				else if ((angle >= 20.0f) && (angle < 70.0f)) {
+					//右前
+					P_Animation.Play(walkR_forward, 0.25);
+				}
+				else if ((angle >= 70.0f) && (angle < 110.0f)) {
+					//右
+					P_Animation.Play(walkR_just, 0.25);
+				}
+				else if ((angle >= 110.0f) && (angle < 160.0f)) {
+					//右後
+					P_Animation.Play(walkR_back, 0.25);
+				}
+				else if ((angle >= 160.0f) && (angle < 200.0f)) {
+					//後
+					P_Animation.Play(walk_back, 0.25);
+				}
+				else if ((angle >= 200.0f) && (angle < 250.0f)) {
+					//左後
+					P_Animation.Play(walkL_back, 0.25);
+				}
+				else if ((angle >= 250.0f) && (angle < 290.0f)) {
+					//左
+					P_Animation.Play(walkL_just, 0.25);
+				}
+				else if ((angle >= 290.0f) && (angle < 340.0f)) {
+					//左前
+					P_Animation.Play(walkL_forward, 0.25);
+				}
 				m_movese.Play(true);
 			}
 			else {//空中時のアニメーション

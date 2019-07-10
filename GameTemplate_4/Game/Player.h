@@ -254,9 +254,23 @@ private:
 	bool player_desflag = false;
 
 	enum AnimClip {//各アニメーションのクリップ。
-		walk,       //歩く
+		walk_forward,       //歩く
+		walk_back,
+		walkR_forward,
+		walkR_just,
+		walkR_back,
+		walkL_forward,
+		walkL_just,
+		walkL_back,
+		walk_forwardBoost,       //ブースト
+		walk_backBoost,
+		walkR_forwardBoost,
+		walkR_justBoost,
+		walkR_backBoost,
+		walkL_forwardBoost,
+		walkL_justBoost,
+		walkL_backBoost,
 		idle,      //待機
-		boost,     //ブースト
 		fly_forward,
 		fly_back,
 		flyR_forward,    //空中右前移動
@@ -267,8 +281,12 @@ private:
 		flyL_back,       //空中左後移動
 		fly_forwardBoost,
 		fly_backBoost,
+		flyR_forwardBoost,
 		flyR_justBoost,
+		flyR_backBoost,
+		flyL_forwardBoost,
 		flyL_justBoost,
+		flyL_backBoost,
 		Animnum          //AnimationClipの総数
 	};
 	Animation P_Animation;				//アニメーション。
